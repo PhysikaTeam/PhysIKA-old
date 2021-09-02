@@ -8,7 +8,7 @@
 #define PhysIKA_GEN_MS_PROBLEM
 #include <boost/property_tree/ptree.hpp>
 
-#include "Common/framework.h"
+#include "Common/FEMCommonFramework.h"
 #include "Problem/constraint/constraints.h"
 #include "Problem/energy/basic_energy.h"
 #include "semi_wrapper.h"

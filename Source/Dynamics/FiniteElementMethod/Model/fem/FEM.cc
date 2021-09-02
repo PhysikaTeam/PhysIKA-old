@@ -6,7 +6,7 @@
  */
 #include <iostream>
 
-#include "Common/eigen_ext.h"
+#include "Common/FEMCommonEigenExt.h"
 
 #include "FEM.h"
 using namespace std;

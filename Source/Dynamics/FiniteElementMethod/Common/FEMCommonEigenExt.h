@@ -4,8 +4,8 @@
  * @description: eigen extern.
  * @version    : 1.0
  */
-#ifndef EIGEN_EXT
-#define EIGEN_EXT
+#pragma once
+
 #include <Eigen/Dense>
 
 namespace PhysIKA {
@@ -52,4 +52,3 @@ indexing(const Eigen::MatrixBase<ArgType>& arg, const RowIndexType& row_indices,
 }
 
 }  // namespace PhysIKA
-#endif

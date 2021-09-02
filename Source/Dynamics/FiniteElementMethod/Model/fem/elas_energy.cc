@@ -4,7 +4,7 @@
  * @description: elasticity energy implementation for finite element method.
  * @version    : 1.0
  */
-#include "Common/polar_decomposition.h"
+#include "Common/FEMCommonPolarDecomposition.h"
 #include "elas_energy.h"
 
 using namespace std;

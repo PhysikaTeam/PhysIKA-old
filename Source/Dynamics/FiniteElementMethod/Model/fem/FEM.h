@@ -10,8 +10,8 @@
 #include <Eigen/StdVector>
 #include <Eigen/Dense>
 
-#include "Common/def.h"
-#include "Common/eigen_ext.h"
+#include "Common/FEMCommonDef.h"
+#include "Common/FEMCommonEigenExt.h"
 
 #include "constitutive.h"
 #include "gaussian_quadrature.h"

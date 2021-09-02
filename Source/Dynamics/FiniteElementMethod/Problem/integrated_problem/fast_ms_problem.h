@@ -8,7 +8,7 @@
 #define PhysIKA_FAST_MS_PROBLEM
 #include <boost/property_tree/ptree.hpp>
 
-#include "Common/framework.h"
+#include "Common/FEMCommonFramework.h"
 #include "Problem/constraint/constraints.h"
 #include "Problem/energy/basic_energy.h"
 #include "Geometry/embedded_interpolate.h"

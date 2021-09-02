@@ -4,16 +4,15 @@
  * @description: functional and constraint definition
  * @version    : 1.0
  */
-#ifndef NUMERIC_DEF_H
-#define NUMERIC_DEF_H
+#pragma once
 
 #include <memory>
 #include <iostream>
 #include <Eigen/Sparse>
 
-#include "data_str_core.h"
-#include "error.h"
-#include "config.h"
+#include "Common/FEMCommonDataStream.h"
+#include "Common/FEMCommonError.h"
+#include "Common/FEMCommonConfig.h"
 namespace PhysIKA {
 
 template <typename T, size_t dim>
@@ -341,5 +340,3 @@ int compute_hes_pattern(const std::shared_ptr<Functional<T, field>>& energy,
 }
 
 }  // namespace PhysIKA
-
-#endif  // NUMERIC_DEF_H

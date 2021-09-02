@@ -6,7 +6,7 @@
  */
 #include <iomanip>
 #include "newton_method.h"
-#include "Common/config.h"
+#include "Common/FEMCommonConfig.h"
 #include "line_search.h"
 #include "Io/io.h"
 #include "fast_ms_solver.h"

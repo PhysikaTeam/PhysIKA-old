@@ -7,7 +7,7 @@
 #ifndef BIGBANG_CONSTRAINTS
 #define BIGBANG_CONSTRAINTS
 #include <unordered_map>
-#include "Common/def.h"
+#include "Common/FEMCommonDef.h"
 
 namespace PhysIKA {
 class hard_position_constraint : public Constraint<double>

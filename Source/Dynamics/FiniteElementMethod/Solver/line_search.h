@@ -9,8 +9,8 @@
 
 #include <memory>
 
-#include "Common/def.h"
-#include "Common/data_str_core.h"
+#include "Common/FEMCommonDef.h"
+#include "Common/FEMCommonDataStream.h"
 
 namespace PhysIKA {
 template <typename T, size_t dim_>

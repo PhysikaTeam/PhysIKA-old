@@ -11,7 +11,7 @@
 #include "Framework/Framework/NumericalIntegrator.h"
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/FieldArray.h"
-#include "Common/framework.h"
+#include "Common/FEMCommonFramework.h"
 #include "Problem/integrated_problem/embedded_elas_fem_problem.h"
 #include "Problem/integrated_problem/embedded_mass_spring_problem.h"
 #include "Solver/solver_lists.h"

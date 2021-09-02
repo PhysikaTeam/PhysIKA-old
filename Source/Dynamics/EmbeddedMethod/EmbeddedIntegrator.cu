@@ -13,7 +13,7 @@
 #include "Framework/Framework/SceneGraph.h"
 #include "Problem/integrated_problem/embedded_elas_fem_problem.h"
 #include "Problem/integrated_problem/fast_ms_problem.h"
-#include "Common/data_str_core.h"
+#include "Common/FEMCommonDataStream.h"
 #include "Solver/solver_lists.h"
 #include "EmbeddedIntegrator.h"
 

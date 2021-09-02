@@ -7,7 +7,7 @@
 #ifndef READ_MODEL_JJ_H
 #define READ_MODEL_JJ_H
 
-#include "error_deal.h"
+#include "Common/FEMCommonError.h"
 #include "copy_macro.h"
 #include <cstdio>
 #include <Eigen/Core>

@@ -7,7 +7,7 @@
 #ifndef MASS_SPRING_OBJ_JJ_H
 #define MASS_SPRING_OBJ_JJ_H
 
-#include "Common/def.h"
+#include "Common/FEMCommonDef.h"
 #include <unordered_map>
 #include "key_comparison.h"
 

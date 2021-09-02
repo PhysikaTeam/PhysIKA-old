@@ -8,8 +8,8 @@
 #define BASIC_ENERGY_H
 #include <vector>
 #include <memory>
-#include "Common/def.h"
-#include "Common/data_str_core.h"
+#include "Common/FEMCommonDef.h"
+#include "Common/FEMCommonDataStream.h"
 
 namespace PhysIKA {
 

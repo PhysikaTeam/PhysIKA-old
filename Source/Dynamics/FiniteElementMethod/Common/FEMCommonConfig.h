@@ -4,8 +4,8 @@
  * @description: timing helper
  * @version    : 1.0
  */
-#ifndef PhysIKA_CONFIG_H
-#define PhysIKA_CONFIG_H
+#pragma once
+
 #include <chrono>
 #include <iostream>
 #include <list>
@@ -56,4 +56,3 @@ private:
     (__VA_ARGS__)
 
 }  // namespace PhysIKA
-#endif

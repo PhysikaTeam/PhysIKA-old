@@ -14,8 +14,8 @@
 #include <Eigen/Geometry>
 #include <Eigen/SVD>
 
-#include "Common/polar_decomposition.h"
-#include "Common/tensor.h"
+#include "Common/FEMCommonPolarDecomposition.h"
+#include "Common/FEMCommonTensor.h"
 
 namespace PhysIKA {
 /**

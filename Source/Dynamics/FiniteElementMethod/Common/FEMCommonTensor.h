@@ -4,8 +4,8 @@
  * @description: tensor class definition
  * @version    : 1.0
  */
-#ifndef PhysIKA_TENSOR
-#define PhysIKA_TENSOR
+#pragma once
+
 #include <Eigen/Dense>
 #include <array>
 #include <iostream>
@@ -134,4 +134,3 @@ ostream& operator<<(ostream& os, const fourth_tensor<T, i, j, k, l>& ten)
 }
 
 }  // namespace PhysIKA
-#endif

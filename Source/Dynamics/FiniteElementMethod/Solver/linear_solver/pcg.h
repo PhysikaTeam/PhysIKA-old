@@ -8,7 +8,7 @@
 #define PhysIKA_PCG_NEW
 #include <Eigen/Sparse>
 #include <iostream>
-#include "Common/DEFINE_TYPE.h"
+#include "Common/FEMCommonType.h"
 #include "linear_solver.h"
 
 namespace PhysIKA {

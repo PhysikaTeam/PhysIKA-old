@@ -6,7 +6,7 @@
  */
 #pragma once
 #include "ParticleSystem/ParticleSystem.h"
-#include "Common/framework.h"
+#include "Common/FEMCommonFramework.h"
 #include "EmbeddedIntegrator.h"
 #include <boost/property_tree/ptree.hpp>
 

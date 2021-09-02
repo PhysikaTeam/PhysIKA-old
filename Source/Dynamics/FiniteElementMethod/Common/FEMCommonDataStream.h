@@ -4,8 +4,8 @@
  * @description: data stream core helper.
  * @version    : 1.0
  */
-#ifndef DATA_STR_H
-#define DATA_STR_H
+#pragma once
+
 #include <unordered_map>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -72,7 +72,3 @@ private:
 };
 
 }  // namespace PhysIKA
-
-// #include "data_str_core.imp"
-
-#endif

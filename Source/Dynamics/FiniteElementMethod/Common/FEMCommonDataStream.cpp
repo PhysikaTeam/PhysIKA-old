@@ -4,7 +4,7 @@
  * @description: data stream core helper.
  * @version    : 1.0
  */
-#include "data_str_core.h"
+#include "FEMCommonDataStream.h"
 #include <iostream>
 using namespace std;
 using namespace Eigen;

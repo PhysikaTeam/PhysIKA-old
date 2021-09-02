@@ -4,15 +4,14 @@
  * @description: define some type usage
  * @version    : 1.0
  */
-#ifndef PhysIKA_DEFINE_TYPE
-#define PhysIKA_DEFINE_TYPE
+#pragma once
+
 #include <limits>
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 
-// using REAL = float;
+namespace PhysIKA {
 
-// #define
 template <typename T>
 inline constexpr T scalar_max()
 {
@@ -53,5 +52,4 @@ using SPM_R = Eigen::SparseMatrix<T, Eigen::RowMajor>;
 
 template <typename T>
 using SPM_C = Eigen::SparseMatrix<T, Eigen::ColMajor>;
-
-#endif
+}

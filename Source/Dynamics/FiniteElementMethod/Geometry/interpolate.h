@@ -13,7 +13,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 // #include <ANN/ANN.h>
-#include "../Common/eigen_ext.h"
+#include "../Common/FEMCommonEigenExt.h"
 #include <iostream>
 #include <vector>
 #include <memory>

@@ -4,7 +4,7 @@
  * @description: timer config define
  * @version    : 1.0
  */
-#include "config.h"
+#include "FEMCommonConfig.h"
 #include <chrono>
 
 using namespace std;

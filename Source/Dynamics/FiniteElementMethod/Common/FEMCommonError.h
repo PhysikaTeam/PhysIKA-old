@@ -1,21 +1,13 @@
 /**
  * @author     : Zhao Chonyyao (cyzhao@zju.edu.cn)
  * @date       : 2021-04-30
- * @description: error dealer helper for mass spring method.
+ * @description: some helper function for error handling.
  * @version    : 1.0
  */
-#ifndef ERROR_DEAL_JJ_H
-#define ERROR_DEAL_JJ_H
+#pragma once
 
+#include <iostream>
 #include <cstdio>
-
-#ifdef EXITIF
-#error
-#endif
-
-#ifdef IFERR
-#error
-#endif
 
 namespace PhysIKA {
 
@@ -38,6 +30,21 @@ namespace PhysIKA {
             OP;                                                                                 \
         }                                                                                       \
     }
-}  // namespace PhysIKA
 
-#endif  // ERROR_DEAL_JJ_H
+template <typename T>
+void exit_if(const T& v, const char* msg = 0)
+{
+    if (v)
+    {
+        printf("%s", msg);
+        exit(v);
+    }
+}
+
+#define IF_ERR(end_op, ...)         \
+    {                               \
+        const int err(__VA_ARGS__); \
+        if (err)                    \
+            end_op(err);            \
+    }
+}  // namespace PhysIKA

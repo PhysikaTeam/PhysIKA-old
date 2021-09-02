@@ -11,7 +11,7 @@
 #include <Eigen/Sparse>
 #include <iostream>
 #include <vector>
-#include "Common/eigen_ext.h"
+#include "Common/FEMCommonEigenExt.h"
 namespace PhysIKA {
 
 //TODO: integrate mass with baiss and quadrature

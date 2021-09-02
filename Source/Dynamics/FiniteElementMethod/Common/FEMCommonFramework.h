@@ -4,10 +4,10 @@
  * @description: framework for problem and solver building.
  * @version    : 1.0
  */
-#ifndef PhysIKA_FRAMEWORK
-#define PhysIKA_FRAMEWORK
-#include "def.h"
-#include "data_str_core.h"
+#pragma once
+
+#include "Common/FEMCommonDef.h"
+#include "Common/FEMCommonDataStream.h"
 #include "Geometry/embedded_interpolate.h"
 #include "Solver/semi_implicit_euler.h"
 #include <memory>
@@ -93,5 +93,3 @@ public:
 };
 
 }  // namespace PhysIKA
-
-#endif

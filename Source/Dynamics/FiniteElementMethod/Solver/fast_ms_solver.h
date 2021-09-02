@@ -10,8 +10,8 @@
 #include <Eigen/SparseCholesky>
 #include <Eigen/SparseLU>
 #include "Geometry/embedded_interpolate.h"
-#include "Common/framework.h"
-#include "Common/DEFINE_TYPE.h"
+#include "Common/FEMCommonFramework.h"
+#include "Common/FEMCommonType.h"
 #include "semi_implicit_euler.h"
 #include "newton_method.h"
 

@@ -4,14 +4,13 @@
  * @description: polar decomposition.
  * @version    : 1.0
  */
-#ifndef PhysIKA_POLAR_DECOMPOSITION_H
-#define PhysIKA_POLAR_DECOMPOSITION_H
+#pragma once
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <Eigen/Sparse>
 
-#include "Common/DEFINE_TYPE.h"
+#include "Common/FEMCommonType.h"
 
 namespace PhysIKA {
 /**
@@ -25,17 +24,6 @@ int polar_decomposition(
     size_t     max_it = 5,
     T          tol    = scalar_eps<T>())
 {
-    // error_msg_ext_cond(
-    //     A.cols() != dim_ || A.rows() != dim_,
-    //     "A is a %lux%lu matrix, not a 3x3", dim_, dim_);
-
-    // // current version only supports dim == 3.
-    // error_msg_ext_cond(
-    //     dim_ != 3,
-    //     "current polar decomposition does not support other dim<%lu>, only 3",
-    //     dim_);
-
-    // simply copy the origin polar decomposition.
     Eigen::Quaternion<T> q(A);
     q.normalize();
     for (size_t i = 0; i < max_it; ++i)
@@ -56,4 +44,3 @@ int polar_decomposition(
 }
 }  // namespace PhysIKA
 
-#endif /* PhysIKA_POLAR_DECOMPOSITION_H */

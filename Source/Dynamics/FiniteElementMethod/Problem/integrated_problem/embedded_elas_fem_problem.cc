@@ -8,7 +8,7 @@
 #include <iomanip>
 #include <boost/property_tree/ptree.hpp>
 
-#include "Common/error.h"
+#include "Common/FEMCommonError.h"
 
 // TODO: possible bad idea of having dependence to model in problem module
 #include "Model/fem/elas_energy.h"

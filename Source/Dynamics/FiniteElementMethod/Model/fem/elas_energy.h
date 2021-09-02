@@ -12,10 +12,10 @@
 #include <set>
 #include <fstream>
 
-#include "Common/def.h"
-#include "Common/data_str_core.h"
-#include "Common/eigen_ext.h"
-#include "Common/DEFINE_TYPE.h"
+#include "Common/FEMCommonDef.h"
+#include "Common/FEMCommonDataStream.h"
+#include "Common/FEMCommonEigenExt.h"
+#include "Common/FEMCommonType.h"
 
 #include "FEM.h"
 
