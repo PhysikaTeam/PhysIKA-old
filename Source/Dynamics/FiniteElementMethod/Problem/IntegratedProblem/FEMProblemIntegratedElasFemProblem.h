@@ -11,7 +11,7 @@
 #include "Common/FEMCommonFramework.h"
 #include "Problem/Constraint/FEMProblemConstraints.h"
 #include "Problem/Energy/FEMProblemEnergyBasicEnergy.h"
-#include "Model/Fem/FEMModelFemElasEnergy.h"
+#include "Model/FEM/FEMModelFemElasEnergy.h"
 #include "FEMProblemIntegratedProblemSemiWrapper.h"
 
 namespace PhysIKA {

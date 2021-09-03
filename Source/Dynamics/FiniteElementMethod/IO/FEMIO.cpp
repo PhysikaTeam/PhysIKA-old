@@ -4,12 +4,12 @@
  * @description: io utility
  * @version    : 1.0
  */
-#include "FEMIo.h"
+#include "FEMIO.h"
 
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include "FEMIoVtk.h"
+#include "FEMIOVtk.h"
 
 using namespace std;
 using namespace Eigen;

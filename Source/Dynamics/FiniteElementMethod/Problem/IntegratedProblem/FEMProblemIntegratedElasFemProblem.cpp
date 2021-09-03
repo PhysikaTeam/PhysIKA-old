@@ -12,11 +12,11 @@
 #include "Common/FEMCommonError.h"
 
 // TODO: possible bad idea of having dependence to model in problem module
-#include "Model/Fem/FEMModelFemElasEnergy.h"
-#include "Model/Fem/FEMModelFemMassMatrix.h"
+#include "Model/FEM/FEMModelFemElasEnergy.h"
+#include "Model/FEM/FEMModelFemMassMatrix.h"
 
 #include "Problem/Energy/FEMProblemEnergyBasicEnergy.h"
-#include "Io/FEMIo.h"
+#include "IO/FEMIO.h"
 #include "Geometry/FEMGeometryExtractSurface.iml"
 
 #include "FEMProblemIntegratedElasFemProblem.h"

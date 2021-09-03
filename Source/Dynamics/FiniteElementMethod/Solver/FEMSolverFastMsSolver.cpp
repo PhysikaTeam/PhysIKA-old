@@ -8,7 +8,7 @@
 #include "FEMSolverNewtonMethod.h"
 #include "Common/FEMCommonConfig.h"
 #include "FEMSolverLineSearch.h"
-#include "Io/FEMIo.h"
+#include "IO/FEMIO.h"
 #include "FEMSolverFastMsSolver.h"
 
 namespace PhysIKA {
