@@ -7,7 +7,7 @@
 
 #pragma once
 #include "ParticleSystem/ParticleSystem.h"
-#include "Common/FEMCommonFramework.h"
+#include "FiniteElementMethod/Common/FEMCommonFramework.h"
 #include "EmbeddedIntegrator.h"
 #include "EmbeddedFiniteElement.h"
 #include <boost/property_tree/ptree.hpp>

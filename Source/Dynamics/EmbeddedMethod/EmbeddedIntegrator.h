@@ -11,10 +11,10 @@
 #include "Framework/Framework/NumericalIntegrator.h"
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/FieldArray.h"
-#include "Common/FEMCommonFramework.h"
-#include "Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedElasFemProblem.h"
-#include "Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedMassSpringProblem.h"
-#include "Solver/FEMSolverLists.h"
+#include "FiniteElementMethod/Common/FEMCommonFramework.h"
+#include "FiniteElementMethod/Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedElasFemProblem.h"
+#include "FiniteElementMethod/Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedMassSpringProblem.h"
+#include "FiniteElementMethod/Solver/FEMSolverLists.h"
 
 namespace PhysIKA {
 template <typename TDataType>

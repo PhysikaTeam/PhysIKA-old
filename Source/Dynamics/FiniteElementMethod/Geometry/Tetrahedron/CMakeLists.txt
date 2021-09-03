@@ -1,4 +1,0 @@
-add_subdirectory(ManifoldChecking)
-add_subdirectory(Tetrahedron)
-add_subdirectory(CutCellGeneration)
-add_subdirectory(Predicates)
