@@ -28,7 +28,13 @@ public:
         : energy_(energy), constraint_(constraint) {}
     std::shared_ptr<Functional<T, dim_>> energy_;
     std::shared_ptr<Constraint<T>>       constraint_;
-    size_t                               Nx() const
+
+    /**
+     * @brief dim of freedom.
+     * 
+     * @return size_t 
+     */
+    size_t Nx() const
     {
         return energy_->Nx();
     }
@@ -45,8 +51,20 @@ class problem_builder
 {
 public:
     virtual ~problem_builder() {}
+    /**
+     * @brief build the problem.
+     * 
+     * @return std::shared_ptr<Problem<T, dim_>> 
+     */
     virtual std::shared_ptr<Problem<T, dim_>> build_problem() const = 0;
-    virtual int                               update_problem(const T* x, const T* v = nullptr);
+    /**
+     * @brief update the problem.
+     * 
+     * @param x 
+     * @param v 
+     * @return int 
+     */
+    virtual int update_problem(const T* x, const T* v = nullptr);
 };
 
 /**
@@ -58,19 +76,46 @@ class embedded_problem_builder
 {
 public:
     virtual ~embedded_problem_builder() {}
+    /**
+     * @brief build the problem.
+     * 
+     * @return std::shared_ptr<Problem<T, dim_>> 
+     */
     virtual std::shared_ptr<Problem<T, dim_>> build_problem() const = 0;
-    virtual int                               update_problem(const T* x, const T* v = nullptr)
+    /**
+     * @brief update problem.
+     * 
+     * @param x 
+     * @param v 
+     * @return int 
+     */
+    virtual int update_problem(const T* x, const T* v = nullptr)
     {
         return 0;
     }
+    /**
+     * @brief Get the embedded interpolate object
+     * 
+     * @return std::shared_ptr<embedded_interpolate<T>> 
+     */
     virtual std::shared_ptr<embedded_interpolate<T>> get_embedded_interpolate()
     {
         return nullptr;
     }
+    /**
+     * @brief Get the nods object
+     * 
+     * @return Eigen::Matrix<T, -1, -1> 
+     */
     virtual Eigen::Matrix<T, -1, -1> get_nods() const
     {
         return Eigen::Matrix<T, -1, -1>::Zero(0, 0);
     }
+    /**
+     * @brief Get the semi implicit object
+     * 
+     * @return std::shared_ptr<semi_implicit<T>> 
+     */
     virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const
     {
         return nullptr;

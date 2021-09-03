@@ -14,14 +14,30 @@
 
 namespace PhysIKA {
 
-//TIMING
+/**
+ * @brief TIMING class
+ * record the timing information.
+ * 
+ */
 class TIMING
 {
 public:
+    /**
+     * @brief time benchmark begin.
+     * 
+     */
     static void begin()
     {
         starts_.push_back(std::chrono::system_clock::now());
     }
+
+    /**
+     * @brief time benchmark finished.
+     * 
+     * @param info benchmark event
+     * @param if_print switch to print out info.
+     * @return double time overhead.
+     */
     static double end(const std::string& info, const bool if_print = true)
     {
         assert(!starts_.empty());

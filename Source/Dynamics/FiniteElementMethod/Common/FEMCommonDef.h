@@ -32,11 +32,48 @@ class Functional
 {
 public:
     virtual ~Functional() {}
-    virtual size_t Nx() const                                    = 0;
-    virtual int    Val(const T* x, data_ptr<T, dim>& data) const = 0;
-    virtual int    Gra(const T* x, data_ptr<T, dim>& data) const = 0;
-    virtual int    Hes(const T* x, data_ptr<T, dim>& data) const = 0;
-    virtual int    Val_Gra_Hes(const T* x, data_ptr<T, dim>& data) const
+    /**
+     * @brief dim of freedom.
+     * 
+     * @return size_t 
+     */
+    virtual size_t Nx() const = 0;
+
+    /**
+     * @brief functional value.
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
+    virtual int Val(const T* x, data_ptr<T, dim>& data) const = 0;
+
+    /**
+     * @brief functional gradient.
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
+    virtual int Gra(const T* x, data_ptr<T, dim>& data) const = 0;
+
+    /**
+     * @brief functional hessian.
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
+    virtual int Hes(const T* x, data_ptr<T, dim>& data) const = 0;
+
+    /**
+     * @brief functional val and gradient.
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
+    virtual int Val_Gra_Hes(const T* x, data_ptr<T, dim>& data) const
     {
         IF_ERR(return, Val(x, data));
         IF_ERR(return, Gra(x, data));
@@ -59,11 +96,48 @@ class Constraint
 {
 public:
     virtual ~Constraint() {}
-    virtual size_t Nx() const                                                                   = 0;
-    virtual size_t Nf() const                                                                   = 0;
-    virtual int    Val(const T* x, T* val) const                                                = 0;
-    virtual int    Jac(const T* x, const size_t off, std::vector<Eigen::Triplet<T>>* jac) const = 0;
-    virtual int    Hes(const T* x, const size_t off, std::vector<std::vector<Eigen::Triplet<T>>>* hes) const
+    /**
+     * @brief dim of freedoms
+     * 
+     * @return size_t 
+     */
+    virtual size_t Nx() const = 0;
+
+    /**
+     * @brief dim of constraints.
+     * 
+     * @return size_t 
+     */
+    virtual size_t Nf() const = 0;
+
+    /**
+     * @brief constraint value.
+     * 
+     * @param x 
+     * @param val 
+     * @return int 
+     */
+    virtual int Val(const T* x, T* val) const = 0;
+
+    /**
+     * @brief constraint jacobian.
+     * 
+     * @param x 
+     * @param off 
+     * @param jac 
+     * @return int 
+     */
+    virtual int Jac(const T* x, const size_t off, std::vector<Eigen::Triplet<T>>* jac) const = 0;
+
+    /**
+     * @brief constraint hessian.
+     * 
+     * @param x 
+     * @param off 
+     * @param hes 
+     * @return int 
+     */
+    virtual int Hes(const T* x, const size_t off, std::vector<std::vector<Eigen::Triplet<T>>>* hes) const
     {
         return __LINE__;
     }
@@ -96,6 +170,14 @@ public:
 template <typename T, size_t dim>
 class energy_t;
 
+/**
+ * @brief build energy type
+ * 
+ * @tparam T 
+ * @tparam dim 
+ * @param buffer 
+ * @return std::shared_ptr<energy_t<T, dim>> 
+ */
 template <typename T, size_t dim>
 std::shared_ptr<energy_t<T, dim>> build_energy_t(const std::vector<std::shared_ptr<Functional<T, dim>>>& buffer)
 {
@@ -180,6 +262,11 @@ public:
     size_t                                                  dim_;
 };
 
+/**
+ * @brief build constraint type
+ * 
+ * @tparam T 
+ */
 template <typename T>
 class constraint_t;
 
@@ -311,6 +398,15 @@ protected:
     size_t                                             xdim_;
 };
 
+/**
+ * @brief compute hessian pattern.
+ * 
+ * @tparam T 
+ * @tparam field 
+ * @param energy 
+ * @param dat_str 
+ * @return int 
+ */
 template <typename T, size_t field>
 int compute_hes_pattern(const std::shared_ptr<Functional<T, field>>& energy,
                         std::shared_ptr<dat_str_core<T, field>>&     dat_str)

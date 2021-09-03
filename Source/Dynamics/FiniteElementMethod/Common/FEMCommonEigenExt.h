@@ -41,6 +41,17 @@ public:
     }
 };
 
+/**
+ * @brief Eigen Indexing.
+ * 
+ * @tparam ArgType 
+ * @tparam RowIndexType 
+ * @tparam ColIndexType 
+ * @param arg 
+ * @param row_indices 
+ * @param col_indices 
+ * @return Eigen::CwiseNullaryOp<indexing_functor<ArgType, RowIndexType, ColIndexType>, typename indexing_functor<ArgType, RowIndexType, ColIndexType>::MatrixType> 
+ */
 template <class ArgType, class RowIndexType, class ColIndexType>
 Eigen::CwiseNullaryOp<indexing_functor<ArgType, RowIndexType, ColIndexType>, typename indexing_functor<ArgType, RowIndexType, ColIndexType>::MatrixType>
 indexing(const Eigen::MatrixBase<ArgType>& arg, const RowIndexType& row_indices, const ColIndexType& col_indices)

@@ -33,16 +33,35 @@ public:
         }
     }
 
+    /**
+     * @brief access [row, col]
+     * 
+     * @param row 
+     * @param col 
+     * @return const Eigen::Matrix<T, k, l>& 
+     */
     const Eigen::Matrix<T, k, l>& operator()(const size_t& row, const size_t& col) const
     {
         return tensor_[row][col];
     }
 
+    /**
+     * @brief access [row, col]
+     * 
+     * @param row 
+     * @param col 
+     * @return Eigen::Matrix<T, k, l>& 
+     */
     Eigen::Matrix<T, k, l>& operator()(const size_t& row, const size_t& col)
     {
         return tensor_[row][col];
     }
 
+    /**
+     * @brief flatten the tensor.
+     * 
+     * @param flatted 
+     */
     void Flatten(Eigen::Matrix<T, i * j, k * l>& flatted)
     {
         flatted.setZero();
@@ -59,6 +78,18 @@ public:
     tensor_type tensor_;
 };
 
+/**
+ * @brief add operation between two fourth tensors.
+ * 
+ * @tparam T 
+ * @tparam i 
+ * @tparam j 
+ * @tparam k 
+ * @tparam l 
+ * @param lhs 
+ * @param rhs 
+ * @return fourth_tensor<T, i, j, k, l> 
+ */
 template <typename T, size_t i, size_t j, int k, int l>
 fourth_tensor<T, i, j, k, l> operator+(const fourth_tensor<T, i, j, k, l>& lhs, const fourth_tensor<T, i, j, k, l>& rhs)
 {
@@ -74,6 +105,18 @@ fourth_tensor<T, i, j, k, l> operator+(const fourth_tensor<T, i, j, k, l>& lhs, 
     return res;
 }
 
+/**
+ * @brief multiply operation on two fourth tensors.
+ * 
+ * @tparam T 
+ * @tparam i 
+ * @tparam j 
+ * @tparam k 
+ * @tparam l 
+ * @param lhs 
+ * @param rhs 
+ * @return fourth_tensor<T, i, j, k, l> 
+ */
 template <typename T, size_t i, size_t j, int k, int l>
 fourth_tensor<T, i, j, k, l> operator*(const fourth_tensor<T, i, j, k, l>& lhs, const Eigen::Matrix<T, k, l>& rhs)
 {
@@ -91,6 +134,18 @@ fourth_tensor<T, i, j, k, l> operator*(const fourth_tensor<T, i, j, k, l>& lhs, 
     return res;
 }
 
+/**
+ * @brief multiply operation on two fourth tensors.
+ * 
+ * @tparam T 
+ * @tparam i 
+ * @tparam j 
+ * @tparam k 
+ * @tparam l 
+ * @param lhs 
+ * @param rhs 
+ * @return fourth_tensor<T, i, j, k, l> 
+ */
 template <typename T, size_t i, size_t j, int k, int l>
 fourth_tensor<T, i, j, k, l> operator*(const Eigen::Matrix<T, k, l>& lhs, const fourth_tensor<T, i, j, k, l>& rhs)
 {
@@ -108,6 +163,18 @@ fourth_tensor<T, i, j, k, l> operator*(const Eigen::Matrix<T, k, l>& lhs, const 
     return res;
 }
 
+/**
+ * @brief output operation on two fourth tensors.
+ * 
+ * @tparam T 
+ * @tparam i 
+ * @tparam j 
+ * @tparam k 
+ * @tparam l 
+ * @param lhs 
+ * @param rhs 
+ * @return fourth_tensor<T, i, j, k, l> 
+ */
 template <typename T, size_t i, size_t j, int k, int l>
 ostream& operator<<(ostream& os, const fourth_tensor<T, i, j, k, l>& ten)
 {

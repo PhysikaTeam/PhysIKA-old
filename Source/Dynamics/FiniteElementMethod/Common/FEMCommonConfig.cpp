@@ -10,6 +10,10 @@
 using namespace std;
 using namespace chrono;
 
+/**
+ * @brief define TIMING starts.
+ * 
+ */
 namespace PhysIKA {
 list<system_clock::time_point> TIMING::starts_;
 }
