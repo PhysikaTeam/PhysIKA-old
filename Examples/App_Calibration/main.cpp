@@ -47,7 +47,7 @@
 #include "Dynamics/EmbeddedMethod/EmbeddedFiniteElement.h"
 #include "Dynamics/EmbeddedMethod/EmbeddedMassSpring.h"
 #include <boost/property_tree/json_parser.hpp>
-#include "Dynamics/FiniteElementMethod/Geometry/surf2tet.h"
+#include "Dynamics/FiniteElementMethod/Geometry/FEMGeometrySurf2Tet.h"
 
 using namespace std;
 using namespace PhysIKA;

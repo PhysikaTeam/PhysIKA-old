@@ -12,9 +12,9 @@
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/FieldArray.h"
 #include "Common/FEMCommonFramework.h"
-#include "Problem/integrated_problem/embedded_elas_fem_problem.h"
-#include "Problem/integrated_problem/embedded_mass_spring_problem.h"
-#include "Solver/solver_lists.h"
+#include "Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedElasFemProblem.h"
+#include "Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedMassSpringProblem.h"
+#include "Solver/FEMSolverLists.h"
 
 namespace PhysIKA {
 template <typename TDataType>

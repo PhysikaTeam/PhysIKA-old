@@ -11,9 +11,9 @@
 #include "Framework/Mapping/PointSetToPointSet.h"
 #include "Framework/Topology/NeighborQuery.h"
 #include "EmbeddedIntegrator.h"
-#include "Problem/integrated_problem/embedded_mass_spring_problem.h"
-#include "Problem/integrated_problem/fast_ms_problem.h"
-#include "Solver/newton_method.h"
+#include "Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedMassSpringProblem.h"
+#include "Problem/IntegratedProblem/FEMProblemIntegratedFastMsProblem.h"
+#include "Solver/FEMSolverNewtonMethod.h"
 #include "Dynamics/ParticleSystem/ElasticityModule.h"
 #include <iostream>
 

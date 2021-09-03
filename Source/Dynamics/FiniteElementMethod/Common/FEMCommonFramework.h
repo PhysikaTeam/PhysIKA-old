@@ -8,8 +8,8 @@
 
 #include "Common/FEMCommonDef.h"
 #include "Common/FEMCommonDataStream.h"
-#include "Geometry/embedded_interpolate.h"
-#include "Solver/semi_implicit_euler.h"
+#include "Geometry/FEMGeometryEmbeddedInterpolate.h"
+#include "Solver/FEMSolverSemiImplicitEuler.h"
 #include <memory>
 #include <iostream>
 

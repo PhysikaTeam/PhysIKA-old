@@ -9,9 +9,10 @@ endif(${APPLE})
 
 
 TARGET_INCLUDE_DIRECTORIES(ZJU_GEOMETRY PUBLIC 
-  $<BUILD_INTERFACE:${ZJU_ROOT_DIR}/Geometry/Tetrahedron/tetrahedron/inc>
-  $<BUILD_INTERFACE:${ZJU_ROOT_DIR}/Geometry/Tetrahedron/manifold_checking/inc/>
-  $<BUILD_INTERFACE:${ZJU_ROOT_DIR}/Geometry/Tetrahedron/cut_cell_generation/inc/>
+  $<BUILD_INTERFACE:${ZJU_ROOT_DIR}/Geometry/Tetrahedron/Predicates/>
+  $<BUILD_INTERFACE:${ZJU_ROOT_DIR}/Geometry/Tetrahedron/Tetrahedron/>
+  $<BUILD_INTERFACE:${ZJU_ROOT_DIR}/Geometry/Tetrahedron/ManifoldChecking/>
+  $<BUILD_INTERFACE:${ZJU_ROOT_DIR}/Geometry/Tetrahedron/CutCellGeneration/>
   )
 TARGET_LINK_LIBRARIES(ZJU_GEOMETRY
 cut tet pred wm_check

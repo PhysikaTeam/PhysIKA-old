@@ -1,3 +1,3 @@
-add_subdirectory(fem)
-add_subdirectory(mass_spring)
+add_subdirectory(Fem)
+add_subdirectory(MassSpring)
 # add_subdirectory(meshless)

@@ -1,4 +1,40 @@
 cmake_minimum_required(VERSION 3.10)
 project(tet)
 
-add_subdirectory(src)
+file(GLOB source *.cpp)
+add_library(tet ${source})
+
+install_as_LIB(tet)
+TARGET_INCLUDE_DIRECTORIES(tet PUBLIC 
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../ManifoldChecking/>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../CutCellGeneration/>
+  )
+
+SET_TARGET_PROPERTIES(tet
+  PROPERTIES
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+
+# #This is a CMake example for Python
+# INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}
+#   ${CMAKE_CURRENT_SOURCE_DIR}/../ManifoldChecking/
+#   ${CMAKE_CURRENT_SOURCE_DIR}/../CutCellGeneration/)
+
+# FIND_PACKAGE(SWIG REQUIRED)
+# INCLUDE(${SWIG_USE_FILE})
+
+# FIND_PACKAGE(PythonLibs)
+# INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+
+# SET(CMAKE_SWIG_FLAGS "")
+# set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../python/)
+# set(SWIG_OUTFILE_DIR ${CMAKE_SWIG_OUTDIR})
+
+# SET_SOURCE_FILES_PROPERTIES(tet_generation.i PROPERTIES CPLUSPLUS ON)
+# SET_SOURCE_FILES_PROPERTIES(tet_generation.i PROPERTIES SWIG_FLAGS "-includeall")
+# swig_add_library(tet_generation LANGUAGE python SOURCES tet_generation.i)
+
+# SWIG_LINK_LIBRARIES(tet_generation ${PYTHON_LIBRARIES} cut tet pred wm_check)
+

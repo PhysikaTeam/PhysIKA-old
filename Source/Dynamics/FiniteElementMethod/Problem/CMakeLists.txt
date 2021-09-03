@@ -1,5 +1,5 @@
-add_subdirectory(energy)
-add_subdirectory(constraint)
-add_subdirectory(integrated_problem)
+add_subdirectory(Energy)
+add_subdirectory(Constraint)
+add_subdirectory(IntegratedProblem)
 
 

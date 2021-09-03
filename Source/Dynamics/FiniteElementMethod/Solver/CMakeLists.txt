@@ -19,7 +19,7 @@ TARGET_LINK_LIBRARIES(ZJU_SOLVER
   ZJU_LINEAR_SOLVER
   ${LAPACK_LIBRARIES})
 
-add_subdirectory(linear_solver)
+add_subdirectory(LinearSolver)
 
 
 install_as_LIB(ZJU_SOLVER)

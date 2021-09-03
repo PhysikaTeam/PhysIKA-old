@@ -1,5 +1,5 @@
 file(GLOB header *.h)
-file(GLOB source *.cc *.c)
+file(GLOB source *.cpp)
 if (${APPLE})
   add_library(ZJU_FEM STATIC ${source})
 else ()
