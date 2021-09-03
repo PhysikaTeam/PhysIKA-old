@@ -22,7 +22,7 @@ struct hash<Eigen::Vector3i>
 
 }  // namespace std
 
-namespace marvel {
+namespace PhysikaFEM {
 struct pair_dis
 {
     size_t n;
@@ -65,4 +65,4 @@ private:
     Eigen::Vector3d cell_size;
 };
 
-}  // namespace marvel
+}  // namespace PhysikaFEM

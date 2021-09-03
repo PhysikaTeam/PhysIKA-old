@@ -2,7 +2,7 @@
 #include <Eigen/LU>
 #include <Eigen/Geometry>
 using namespace Eigen;
-namespace marvel {
+namespace PhysikaFEM {
 double clo_surf_vol(const MatrixXd& nods, const MatrixXi& surf)
 {
     //TODO:check if the surface is closed and manifold
@@ -39,4 +39,4 @@ int build_bdbox(const MatrixXd& nods, MatrixXd& bdbox)
     return 0;
 }
 
-}  // namespace marvel
+}  // namespace PhysikaFEM

@@ -9,7 +9,7 @@
 using namespace std;
 using namespace Eigen;
 
-namespace marvel {
+namespace PhysikaFEM {
 
 spatial_hash::spatial_hash(const MatrixXd& points_, const size_t& nn_num_)
     : points(points_), points_num(points_.cols()), nn_num(nn_num_)
@@ -305,4 +305,4 @@ int spatial_hash::get_friends(const Vector3d& query, const double& sup_radi, vec
 //   return 0;
 // }
 
-}  // namespace marvel
+}  // namespace PhysikaFEM
