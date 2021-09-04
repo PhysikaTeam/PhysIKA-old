@@ -301,11 +301,11 @@ inline __device__ bool overlaps(uint i, uint j, g_box* Abxs, g_box* Bbxs)
  * @param[in] bvh_cones   pointer to bvh cones
  * @param[in] tri_cones   pointer to triangle cones
  */
-inline __device__ void refit(int     i, 
-                             int*    bvh_ids, 
-                             g_box*  bvh_boxes, 
-                             g_box*  tri_boxes, 
-                             g_cone* bvh_cones, 
+inline __device__ void refit(int     i,
+                             int*    bvh_ids,
+                             g_box*  bvh_boxes,
+                             g_box*  tri_boxes,
+                             g_cone* bvh_cones,
                              g_cone* tri_cones)
 {
     if (isLeaf(i, bvh_ids))  // isLeaf
@@ -341,11 +341,11 @@ inline __device__ void refit(int     i,
  * @param[in] tri_cones   pointer to triangle cones
  * @param[in] num         numbers
  */
-__global__ void refit_serial_kernel(int*    bvh_ids, 
-                                    g_box*  bvh_boxes, 
-                                    g_box*  tri_boxes, 
-                                    g_cone* bvh_cones, 
-                                    g_cone* tri_cones, 
+__global__ void refit_serial_kernel(int*    bvh_ids,
+                                    g_box*  bvh_boxes,
+                                    g_box*  tri_boxes,
+                                    g_cone* bvh_cones,
+                                    g_cone* tri_cones,
                                     int     num)
 {
     for (int i = num - 1; i >= 0; i--)
@@ -364,12 +364,12 @@ __global__ void refit_serial_kernel(int*    bvh_ids,
  * @param[in] tri_cones   pointer to triangle cones
  * @param[in] num         numbers
  */
-__global__ void refit_kernel(int*    bvh_ids, 
-                             g_box*  bvh_boxes, 
-                             g_box*  tri_boxes, 
-                             g_cone* bvh_cones, 
-                             g_cone* tri_cones, 
-                             int     st, 
+__global__ void refit_kernel(int*    bvh_ids,
+                             g_box*  bvh_boxes,
+                             g_box*  tri_boxes,
+                             g_cone* bvh_cones,
+                             g_cone* tri_cones,
+                             int     st,
                              int     num)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
