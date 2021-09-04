@@ -4,15 +4,16 @@
 #include <queue>
 using namespace std;
 
+namespace PhysIKA {
 extern void refitBVH(bool);
 extern void pushBVH(unsigned int length, int* ids, bool isCloth);
 extern void pushBVHLeaf(unsigned int length, int* idf, bool isCloth);
 extern void pushBVHIdx(int max_level, unsigned int* level_idx, bool isCloth);
 extern void pushFront(bool, int, unsigned int*);
 
-static vector<PhysIKA::CollisionMesh*>* ptCloth;
+static vector<CollisionMesh*>* ptCloth;
 
-static void mesh_id(int id, vector<PhysIKA::CollisionMesh*>& m, int& mid, int& fid)
+static void mesh_id(int id, vector<CollisionMesh*>& m, int& mid, int& fid)
 {
     fid = id;
     for (mid = 0; mid < m.size(); mid++)
@@ -47,8 +48,8 @@ static bool covertex(int id1, int id2)
     if (mid1 != mid2)
         return false;
 
-    PhysIKA::CollisionMesh::tri3f& f1 = (*ptCloth)[mid1]->_tris[fid1];
-    PhysIKA::CollisionMesh::tri3f& f2 = (*ptCloth)[mid2]->_tris[fid2];
+    CollisionMesh::tri3f& f1 = (*ptCloth)[mid1]->_tris[fid1];
+    CollisionMesh::tri3f& f2 = (*ptCloth)[mid2]->_tris[fid2];
 
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
@@ -58,7 +59,6 @@ static bool covertex(int id1, int id2)
     return false;
 }
 
-namespace PhysIKA {
 void bvh_node::setParent(int p)
 {
     _parent = p;
@@ -195,7 +195,11 @@ void bvh_node::construct(unsigned int id, TAlignedBox3D<float>* s_fboxes)
     _box   = s_fboxes[id];
 }
 
-void bvh_node::construct(unsigned int* lst, unsigned int num, vec3f* s_fcenters, TAlignedBox3D<float>* s_fboxes, bvh_node*& s_current)
+void bvh_node::construct(unsigned int*         lst,
+                         unsigned int          num,
+                         vec3f*                s_fcenters,
+                         TAlignedBox3D<float>* s_fboxes,
+                         bvh_node*&            s_current)
 {
     for (unsigned int i = 0; i < num; i++)
         _box += s_fboxes[lst[i]];
@@ -548,7 +552,7 @@ void bvh::push2GPU(bool isCloth)
         ids[length + i] = (root() + i)->parentID();
     }
 
-    ::pushBVH(length, ids, isCloth);
+    pushBVH(length, ids, isCloth);
     delete[] ids;
 
     unsigned int leafNum = 0;
@@ -563,7 +567,7 @@ void bvh::push2GPU(bool isCloth)
         }
     }
     assert(leafNum == _num);
-    ::pushBVHLeaf(leafNum, idf, isCloth);
+    pushBVHLeaf(leafNum, idf, isCloth);
     delete[] idf;
 
     {  // push information for refit
@@ -582,11 +586,11 @@ void bvh::push2GPU(bool isCloth)
                 level_idx[i] += level_buffer[j];
 
         delete[] level_buffer;
-        ::pushBVHIdx(max_level, level_idx, isCloth);
+        pushBVHIdx(max_level, level_idx, isCloth);
         delete[] level_idx;
     }
 
-    ::refitBVH(isCloth);
+    refitBVH(isCloth);
 }
 
 void front_list::push2GPU(bvh_node* r1, bvh_node* r2)
@@ -612,11 +616,11 @@ void front_list::push2GPU(bvh_node* r1, bvh_node* r2)
             buffer[idx++] = n._ptr;
         }
 
-        ::pushFront(self, num, buffer);
+        pushFront(self, num, buffer);
         printf("%d\n", num);
         delete[] buffer;
     }
     else
-        ::pushFront(self, 0, NULL);
+        pushFront(self, 0, NULL);
 }
 }  // namespace PhysIKA

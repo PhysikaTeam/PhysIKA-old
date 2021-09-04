@@ -13,8 +13,8 @@
 
 namespace PhysIKA {
 /**
-     * collision mesh class to interpret input data into Collision handlable data structure
-     */
+  * collision mesh class to interpret input data into Collision handlable data structure
+  */
 class CollisionMesh
 {
 public:
@@ -67,13 +67,13 @@ public:
     unsigned int _num_tri;  //!< number of triangles
 
     /**
-         * constructor
-         * 
-         * @param[in] numVtx number of vertices
-         * @param[in] numTri number of triangles
-         * @param[in] tris   triangle array pointer
-         * @param[in] vtxs   vertex array pointer
-         */
+      * constructor
+      * 
+      * @param[in] numVtx number of vertices
+      * @param[in] numTri number of triangles
+      * @param[in] tris   triangle array pointer
+      * @param[in] vtxs   vertex array pointer
+      */
     CollisionMesh(unsigned int numVtx, unsigned int numTri, tri3f* tris, vec3f* vtxs)
     {
         _num_vtx = numVtx;
@@ -86,8 +86,8 @@ public:
     }
 
     /**
-         * destructor
-         */
+      * destructor
+      */
     ~CollisionMesh()
     {
         delete[] _tris;
@@ -97,40 +97,40 @@ public:
     }
 
     /**
-         * get the number of vertices
-         * 
-         * @return the number of vertices
-         */
+      * get the number of vertices
+      * 
+      * @return the number of vertices
+      */
     unsigned int getNbVertices() const
     {
         return _num_vtx;
     }
 
     /**
-         * get the number of triangle faces
-         *
-         * @return the number of triangle faces
-         */
+      * get the number of triangle faces
+      *
+      * @return the number of triangle faces
+      */
     unsigned int getNbFaces() const
     {
         return _num_tri;
     }
 
     /**
-         * get the vertex array pointer
-         *
-         * @return the vertex array pointer
-         */
+      * get the vertex array pointer
+      *
+      * @return the vertex array pointer
+      */
     vec3f* getVtxs() const
     {
         return _vtxs;
     }
 
     /**
-         * get the previous vertex array pointer
-         *
-         * @return the previous vertex array pointer
-         */
+      * get the previous vertex array pointer
+      *
+      * @return the previous vertex array pointer
+      */
     vec3f* getOVtxs() const
     {
         return _ovtxs;

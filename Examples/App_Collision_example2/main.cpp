@@ -1,5 +1,5 @@
 /**
- * @author     : syby119 (syby119@163.com)
+ * @author     : syby119 (syby119@126.com)
  * @date       : 2021-05-30
  * @description: demo of discrete collision detection between meshes
  * @version    : 1.0
@@ -22,19 +22,14 @@
 #include "Framework/Framework/SceneGraph.h"
 #include "Framework/Framework/Log.h"
 #include "Framework/Collision/Collision.h"
-#include "Framework/Collision/CollidableTriangleMesh.h"
 #include "Dynamics/ParticleSystem/StaticBoundary.h"
 #include "Dynamics/RigidBody/TriangleMesh.h"
 #include "Dynamics/RigidBody/RigidCollisionBody.h"
-#include "Rendering/SurfaceMeshRender.h"
 #include "GUI/GlutGUI/GLApp.h"
 
 #include "SurfaceLineRender.h"
 
-using namespace std;
 using namespace PhysIKA;
-
-std::vector<std::shared_ptr<TriangleMesh<DataType3f>>> CollisionManager::Meshes = {};
 
 std::shared_ptr<RigidCollisionBody<DataType3f>> human;
 std::shared_ptr<RigidCollisionBody<DataType3f>> cloth;
@@ -117,7 +112,7 @@ void checkCollision()
     // assemble result for display, a really silly way for displaying...
     // cloth
     {
-        clothCollisionTriangles = make_shared<RigidCollisionBody<DataType3f>>();
+        clothCollisionTriangles = std::make_shared<RigidCollisionBody<DataType3f>>();
         root->addRigidBody(clothCollisionTriangles);
 
         std::vector<DataType3f::Coord> points;
@@ -139,7 +134,7 @@ void checkCollision()
             triangles.push_back(TopologyModule::Triangle(3 * i, 3 * i + 1, 3 * i + 2));
         }
 
-        auto triSet = make_shared<TriangleSet<DataType3f>>();
+        auto triSet = std::make_shared<TriangleSet<DataType3f>>();
         triSet->setPoints(points);
         triSet->setNormals(normals);
         triSet->setTriangles(triangles);
@@ -153,7 +148,7 @@ void checkCollision()
 
     // human
     {
-        humanCollisionTriangles = make_shared<RigidCollisionBody<DataType3f>>();
+        humanCollisionTriangles = std::make_shared<RigidCollisionBody<DataType3f>>();
         root->addRigidBody(humanCollisionTriangles);
 
         std::vector<DataType3f::Coord> points;
@@ -175,7 +170,7 @@ void checkCollision()
             triangles.push_back(TopologyModule::Triangle(3 * i, 3 * i + 1, 3 * i + 2));
         }
 
-        auto triSet = make_shared<TriangleSet<DataType3f>>();
+        auto triSet = std::make_shared<TriangleSet<DataType3f>>();
         triSet->setPoints(points);
         triSet->setNormals(normals);
         triSet->setTriangles(triangles);
@@ -211,28 +206,31 @@ void keyboardFunc(unsigned char key, int x, int y)
  */
 void idleFunction()
 {
-    static int index = 0;
-    if (index > 93)  //max frame number
-        return;
+    static int    index    = 0;
+    constexpr int maxIndex = 94;
 
-    if (mode == ExampleMode::Static)  //static scene
+    if (mode == ExampleMode::Static)
     {
-        createScene("../../Media/character/cloth000-uv.obj", "../../Media/character/pose000.obj");
-        index = 94;
-        return;
+        if (index == 0)
+        {
+            createScene("../../Media/character/cloth000-uv.obj", "../../Media/character/pose000.obj");
+            index++;
+        }
     }
+    else if (mode == ExampleMode::Dynamic)
+    {
+        if ((pause && index > 0) || index >= maxIndex)
+            return;
 
-    if ((pause && index > 0) || index > 93)
-        return;
+        std::cout << "=========================" << index << "=========================" << std::endl;
 
-    //dynamic scene
-    std::stringstream clothPath, humanPath;
-    clothPath << "../../Media/bishop/cloth" << setw(3) << setfill('0') << index << "-uv.obj";
-    humanPath << "../../Media/bishop/pose" << setw(3) << setfill('0') << index << ".obj";
+        std::stringstream clothPath, humanPath;
 
-    createScene(clothPath.str(), humanPath.str());
-
-    index++;
+        clothPath << "../../Media/bishop/cloth" << std::setw(3) << std::setfill('0') << index << "-uv.obj";
+        humanPath << "../../Media/bishop/pose" << std::setw(3) << std::setfill('0') << index << ".obj";
+        createScene(clothPath.str(), humanPath.str());
+        index++;
+    }
 }
 
 /**
@@ -240,7 +238,8 @@ void idleFunction()
  * usage:
  * excutable-name scene-option
  * example:
- * App_Collision_example2.exe -s
+ * static collision dectection: App_Collision_example2.exe -s 
+ * dynamic collision dectection: App_Collision_example2.exe -d
  */
 int main(int argc, char* argv[])
 {

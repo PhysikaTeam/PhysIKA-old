@@ -11,8 +11,8 @@
 
 namespace PhysIKA {
 /**
-     * vec3f data structure
-     */
+ * vec3f data structure
+ */
 class vec3f
 {
 public:
@@ -29,8 +29,8 @@ public:
     };
 
     /**
-         * constructor
-         */
+     * constructor
+     */
     vec3f()
     {
         x = 0;
@@ -39,10 +39,10 @@ public:
     }
 
     /**
-         * copy constructor
-         *
-         * @param[in] v another vec3f
-         */
+      * copy constructor
+      *
+      * @param[in] v another vec3f
+      */
     vec3f(const vec3f& v)
     {
         x = v.x;
@@ -51,10 +51,10 @@ public:
     }
 
     /**
-         * constructor
-         *
-         * @param[in] v data pointer
-         */
+      * constructor
+      *
+      * @param[in] v data pointer
+      */
     vec3f(const float* v)
     {
         x = v[0];
@@ -63,10 +63,10 @@ public:
     }
 
     /**
-         * constructor
-         *
-         * @param[in] v data pointer
-         */
+      * constructor
+      *
+      * @param[in] v data pointer
+      */
     vec3f(float* v)
     {
         x = v[0];
@@ -75,12 +75,12 @@ public:
     }
 
     /**
-         * constructor
-         *
-         * @param[in] x x-direction data
-         * @param[in] y y-direction data
-         * @param[in] z z-direction data
-         */
+      * constructor
+      *
+      * @param[in] x x-direction data
+      * @param[in] y y-direction data
+      * @param[in] z z-direction data
+      */
     vec3f(float x, float y, float z)
     {
         this->x = x;
@@ -89,11 +89,11 @@ public:
     }
 
     /**
-         * operator[]
-         *
-         * @param[in] i index
-         * @return the i-th data of the vec3f
-         */
+      * operator[]
+      *
+      * @param[in] i index
+      * @return the i-th data of the vec3f
+      */
     float operator[](int i) const
     {
         return v[i];
@@ -111,11 +111,11 @@ public:
     }
 
     /**
-         * operator += add the vec3f with another one
-         *
-         * @param[in] v another vec3f
-         * @return add result
-         */
+      * operator += add the vec3f with another one
+      *
+      * @param[in] v another vec3f
+      * @return add result
+      */
     vec3f& operator+=(const vec3f& v)
     {
         x += v.x;
@@ -125,11 +125,11 @@ public:
     }
 
     /**
-         * operator -= substract the vec3f with another one
-         *
-         * @param[in] v another vec3f
-         * @return substract result
-         */
+      * operator -= substract the vec3f with another one
+      *
+      * @param[in] v another vec3f
+      * @return substract result
+      */
     vec3f& operator-=(const vec3f& v)
     {
         x -= v.x;
@@ -139,11 +139,11 @@ public:
     }
 
     /**
-         * operator *= multiply with a scalar
-         *
-         * @param[in] t scalar
-         * @return multiply result
-         */
+      * operator *= multiply with a scalar
+      *
+      * @param[in] t scalar
+      * @return multiply result
+      */
     vec3f& operator*=(float t)
     {
         x *= t;
@@ -153,11 +153,11 @@ public:
     }
 
     /**
-         * operator /= divide with a scalar
-         *
-         * @param[in] t scalar
-         * @return divide result
-         */
+      * operator /= divide with a scalar
+      *
+      * @param[in] t scalar
+      * @return divide result
+      */
     vec3f& operator/=(float t)
     {
         x /= t;
@@ -167,8 +167,8 @@ public:
     }
 
     /**
-         * negate the current vector
-         */
+      * negate the current vector
+      */
     void negate()
     {
         x = -x;
@@ -177,84 +177,84 @@ public:
     }
 
     /**
-         * negate the current vector
-         *
-         * @return the negated result
-         */
+      * negate the current vector
+      *
+      * @return the negated result
+      */
     vec3f operator-() const
     {
         return vec3f(-x, -y, -z);
     }
 
     /**
-         * vector add two vector
-         *
-         * @param[in] v another vec3f
-         * @return add result
-         */
+      * vector add two vector
+      *
+      * @param[in] v another vec3f
+      * @return add result
+      */
     vec3f operator+(const vec3f& v) const
     {
         return vec3f(x + v.x, y + v.y, z + v.z);
     }
 
     /**
-         * vector substract
-         *
-         * @param[in] v another vec3f
-         * @return the substracted result
-         */
+      * vector substract
+      *
+      * @param[in] v another vec3f
+      * @return the substracted result
+      */
     vec3f operator-(const vec3f& v) const
     {
         return vec3f(x - v.x, y - v.y, z - v.z);
     }
 
     /**
-         * vector multiply a scalar
-         *
-         * @param[in] t scaler
-         * @return the multiplied result
-         */
+      * vector multiply a scalar
+      *
+      * @param[in] t scaler
+      * @return the multiplied result
+      */
     vec3f operator*(float t) const
     {
         return vec3f(x * t, y * t, z * t);
     }
 
     /**
-         * vector divide a scalar
-         *
-         * @param[in] t scaler
-         * @return the divided result
-         */
+      * vector divide a scalar
+      *
+      * @param[in] t scaler
+      * @return the divided result
+      */
     vec3f operator/(float t) const
     {
         return vec3f(x / t, y / t, z / t);
     }
 
     /**
-         * vector cross product
-         *
-         * @param[in] v another vec3f
-         * @return cross product result
-         */
+      * vector cross product
+      *
+      * @param[in] v another vec3f
+      * @return cross product result
+      */
     const vec3f cross(const vec3f& vec) const
     {
         return vec3f(y * vec.z - z * vec.y, z * vec.x - x * vec.z, x * vec.y - y * vec.x);
     }
 
     /**
-         * vector dot product
-         *
-         * @param[in] v another vec3f
-         * @return dot product result
-         */
+      * vector dot product
+      *
+      * @param[in] v another vec3f
+      * @return dot product result
+      */
     float dot(const vec3f& vec) const
     {
         return x * vec.x + y * vec.y + z * vec.z;
     }
 
     /**
-         * vector normalize
-         */
+      * vector normalize
+      */
     void normalize()
     {
         float sum = x * x + y * y + z * z;
@@ -268,66 +268,66 @@ public:
     }
 
     /**
-         * get vector length
-         *
-         * @return the length of the vector
-         */
+      * get vector length
+      *
+      * @return the length of the vector
+      */
     float length() const
     {
         return float(sqrt(x * x + y * y + z * z));
     }
 
     /**
-         * get unit vector of the current vector
-         *
-         * @return the unit vector
-         */
+      * get unit vector of the current vector
+      *
+      * @return the unit vector
+      */
     vec3f getUnit() const
     {
         return (*this) / length();
     }
 
     /**
-         * eplision equal
-         *
-         * @param[in] a one number
-         * @param[in] b the other number
-         * @param[in] tol threshold
-         * @return whether the two number is equal with respect to the current threshold
-         */
+      * eplision equal
+      *
+      * @param[in] a one number
+      * @param[in] b the other number
+      * @param[in] tol threshold
+      * @return whether the two number is equal with respect to the current threshold
+      */
     inline bool isEqual(float a, float b, float tol = float(10e-6)) const
     {
         return fabs(a - b) < tol;
     }
 
     /**
-         * check unit
-         *
-         * @return whether the current vector is a unit vector
-         */
+      * check unit
+      *
+      * @return whether the current vector is a unit vector
+      */
     bool isUnit() const
     {
         return isEqual(squareLength(), 1.f);
     }
 
     /**
-         * get the infinity norm
-         *
-         * @return the infinity norm
-         */
+      * get the infinity norm
+      *
+      * @return the infinity norm
+      */
     float infinityNorm() const
     {
         return fmax(fmax(fabs(x), fabs(y)), fabs(z));
     }
 
     /**
-         * set the value of the vec3f
-         *
-         * @param[in] vx x-direction value
-         * @param[in] vy y-direction value
-         * @param[in] vz z-direction value
-         * @return new vec3f
-         */
+      * set the value of the vec3f
+      *
+      * @param[in] vx x-direction value
+      * @param[in] vy y-direction value
+      * @param[in] vz z-direction value
+      * @return new vec3f
+      */
     vec3f& set_value(const float& vx, const float& vy, const float& vz)
     {
         x = vx;
@@ -337,31 +337,31 @@ public:
     }
 
     /**
-         * check if two vec3f has the same value
-         *
-         * @param[in] other another vector
-         * @return check result
-         */
+      * check if two vec3f has the same value
+      *
+      * @param[in] other another vector
+      * @return check result
+      */
     bool equal_abs(const vec3f& other)
     {
         return x == other.x && y == other.y && z == other.z;
     }
 
     /**
-         * get the square length
-         *
-         * @return the square length
-         */
+      * get the square length
+      *
+      * @return the square length
+      */
     float squareLength() const
     {
         return x * x + y * y + z * z;
     }
 
     /**
-         * get a vec3f with all elements 0
-         *
-         * @return the zero vector
-         */
+      * get a vec3f with all elements 0
+      *
+      * @return the zero vector
+      */
     static vec3f zero()
     {
         return vec3f(0.f, 0.f, 0.f);
@@ -403,73 +403,73 @@ public:
 };
 
 /**
-     * scalar multiply vec3f
-     *
-     * @param[in] t scalar
-     * @param[in] v vec3f
-     * @return result
-     */
+  * scalar multiply vec3f
+  *
+  * @param[in] t scalar
+  * @param[in] v vec3f
+  * @return result
+  */
 inline vec3f operator*(float t, const vec3f& v)
 {
     return vec3f(v.x * t, v.y * t, v.z * t);
 }
 
 /**
-     * lerp two vec3f with (1 - t) * a + t * b
-     * @param[in] a vec3f
-     * @param[in] b vec3f
-     * @param[in] t scalar
-     * @return lerp result
-     */
+  * lerp two vec3f with (1 - t) * a + t * b
+  * @param[in] a vec3f
+  * @param[in] b vec3f
+  * @param[in] t scalar
+  * @return lerp result
+  */
 inline vec3f interp(const vec3f& a, const vec3f& b, float t)
 {
     return a * (1 - t) + b * t;
 }
 
 /**
-     * vinterp two vec3f with t * a + (1 - t) * b
-     * @param[in] a vec3f
-     * @param[in] b vec3f
-     * @param[in] t scalar
-     * @return vinterp result
-     */
+  * vinterp two vec3f with t * a + (1 - t) * b
+  * @param[in] a vec3f
+  * @param[in] b vec3f
+  * @param[in] t scalar
+  * @return vinterp result
+  */
 inline vec3f vinterp(const vec3f& a, const vec3f& b, float t)
 {
     return a * t + b * (1 - t);
 }
 
 /**
-     * calculate weighted position of three vec3f
-     * @param[in] a vec3f
-     * @param[in] b vec3f
-     * @param[in] c vec3f
-     * @param[in] u weight
-     * @param[in] v weight
-     * @param[in] w weight
-     * @return weighted position result
-     */
+ * calculate weighted position of three vec3f
+ * @param[in] a vec3f
+ * @param[in] b vec3f
+ * @param[in] c vec3f
+ * @param[in] u weight
+ * @param[in] v weight
+ * @param[in] w weight
+ * @return weighted position result
+ */
 inline vec3f interp(const vec3f& a, const vec3f& b, const vec3f& c, float u, float v, float w)
 {
     return a * u + b * v + c * w;
 }
 
 /**
-     * calculate the distance of to points
-     * @param[in] a vec3f
-     * @param[in] b vec3f
-     * @return distance
-     */
+ * calculate the distance of to points
+ * @param[in] a vec3f
+ * @param[in] b vec3f
+ * @return distance
+ */
 inline float vdistance(const vec3f& a, const vec3f& b)
 {
     return (a - b).length();
 }
 
 /**
-     * print vec3f data
-     * @param[in] os output stream
-     * @param[in] v  vec3f
-     * @return output stream
-     */
+ * print vec3f data
+ * @param[in] os output stream
+ * @param[in] v  vec3f
+ * @return output stream
+ */
 inline std::ostream& operator<<(std::ostream& os, const vec3f& v)
 {
     os << "(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
@@ -477,11 +477,11 @@ inline std::ostream& operator<<(std::ostream& os, const vec3f& v)
 }
 
 /**
-     * get the min value of two vec3f in all directions
-     * @param[in] a vec3f
-     * @param[in] b vec3f
-     * @return the min values in vec3f
-     */
+ * get the min value of two vec3f in all directions
+ * @param[in] a vec3f
+ * @param[in] b vec3f
+ * @return the min values in vec3f
+ */
 inline void vmin(vec3f& a, const vec3f& b)
 {
     a.set_value(
@@ -491,11 +491,11 @@ inline void vmin(vec3f& a, const vec3f& b)
 }
 
 /**
-     * get the max value of two vec3f in all directions
-     * @param[in] a vec3f
-     * @param[in] b vec3f
-     * @return the max values in vec3f
-     */
+ * get the max value of two vec3f in all directions
+ * @param[in] a vec3f
+ * @param[in] b vec3f
+ * @return the max values in vec3f
+ */
 inline void vmax(vec3f& a, const vec3f& b)
 {
     a.set_value(
@@ -505,12 +505,12 @@ inline void vmax(vec3f& a, const vec3f& b)
 }
 
 /**
-     * lerp between two vector
-     * @param[in] a vec3f
-     * @param[in] b vec3f
-     * @param[in] t scalar
-     * @return lerp result
-     */
+ * lerp between two vector
+ * @param[in] a vec3f
+ * @param[in] b vec3f
+ * @param[in] t scalar
+ * @return lerp result
+ */
 inline vec3f lerp(const vec3f& a, const vec3f& b, float t)
 {
     return a + t * (b - a);

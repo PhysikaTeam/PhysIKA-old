@@ -6,14 +6,13 @@
 #include "CollisionBVH.h"
 #include "CollisionDate.h"
 
+namespace PhysIKA {
 extern int  getCollisionsGPU(int*, int*, int*, float*, int*, int*, float*);
 extern int  getSelfCollisionsSH(int*);
 extern void pushMesh2GPU(int numFace, int numVert, void* faces, void* nodes);
 extern void updateMesh2GPU(void* nodes, void* prenodes, float thickness);
-
 extern void initGPU();
 
-namespace PhysIKA {
 static CollisionMesh::tri3f* s_faces;
 static vec3f*                s_nodes;
 static int                   s_numFace = 0, s_numVert = 0;
@@ -49,7 +48,7 @@ void updateMesh2GPU(std::vector<CollisionMesh*>& ms, float thickness)
         }
     }
 
-    ::updateMesh2GPU(s_nodes, preVert, thickness);
+    updateMesh2GPU(s_nodes, preVert, thickness);
 }
 
 void pushMesh2GPU(std::vector<CollisionMesh*>& ms)
@@ -80,13 +79,13 @@ void pushMesh2GPU(std::vector<CollisionMesh*>& ms)
         curVert += m->_num_vtx;
     }
 
-    ::pushMesh2GPU(s_numFace, s_numVert, s_faces, s_nodes);
+    pushMesh2GPU(s_numFace, s_numVert, s_faces, s_nodes);
 }
 
 void body_collide_gpu(
     std::vector<CollisionDate>              bodys,
     std::vector<std::vector<TrianglePair>>& contacts,
-    int&                                    CCDtime,
+    int&                                    ccd_time,
     std::vector<ImpactInfo>&                contact_info,
     float                                   thickness)
 {
@@ -120,7 +119,7 @@ void body_collide_gpu(
 
         bvhC->self_collide(fIntra, meshes);
 
-        ::initGPU();
+        initGPU();
         pushMesh2GPU(meshes);
         bvhC->push2GPU(true);
 
@@ -130,19 +129,28 @@ void body_collide_gpu(
     updateMesh2GPU(meshes, thickness);
     printf("thickness is %f\n", thickness);
 
-    count = ::getCollisionsGPU(buffer, buffer_vf_ee, buffer_vertex_id, buffer_dist, time_buffer, buffer_CCD, &thickness);
+    count = getCollisionsGPU(buffer, buffer_vf_ee, buffer_vertex_id, buffer_dist, time_buffer, buffer_CCD, &thickness);
 
     TrianglePair*             pairs = ( TrianglePair* )buffer;
     std::vector<TrianglePair> ret(pairs, pairs + count);
 
     for (int i = 0; i < count; i++)
     {
-        ImpactInfo tem = ImpactInfo(buffer[i * 2], buffer[i * 2 + 1], buffer_vf_ee[i], buffer_vertex_id[i * 4], buffer_vertex_id[i * 4 + 1], buffer_vertex_id[i * 4 + 2], buffer_vertex_id[i * 4 + 3], buffer_dist[i], time_buffer[0], buffer_CCD[i]);
+        ImpactInfo tem = ImpactInfo(buffer[i * 2],
+                                    buffer[i * 2 + 1],
+                                    buffer_vf_ee[i],
+                                    buffer_vertex_id[i * 4],
+                                    buffer_vertex_id[i * 4 + 1],
+                                    buffer_vertex_id[i * 4 + 2],
+                                    buffer_vertex_id[i * 4 + 3],
+                                    buffer_dist[i],
+                                    time_buffer[0],
+                                    buffer_CCD[i]);
 
         contact_info.push_back(tem);
     }
 
-    CCDtime = time_buffer[0];
+    ccd_time = time_buffer[0];
 
     //Find mesh id and face id
     for (int i = 0; i < count; i++)

@@ -13,81 +13,82 @@
 
 namespace PhysIKA {
 /**
-     * Data structure to store collision results.
-     *
-     * Sample usage:
-     * TrianglePair result = ...
-     * auto meshID = result.id0();
-     * auto triangleID = result.id1();
-     */
+ * Data structure to store collision results.
+ *
+ * Sample usage:
+ * TrianglePair result = ...
+ * auto meshID = result.id0();
+ * auto triangleID = result.id1();
+ */
 class TrianglePair
 {
-    unsigned int _id[2];  //< ! mesh index - triangle index pair
-
 public:
     /**
-         * get mesh index
-         *
-         * @return mesh index
-         */
+     * get mesh index
+     *
+     * @return mesh index
+     */
     unsigned int id0() const
     {
-        return _id[0];
+        return m_id[0];
     }
 
     /**
-         * get triangle index
-         *
-         * @return triangle index
-         */
+     * get triangle index
+     *
+     * @return triangle index
+     */
     unsigned int id1() const
     {
-        return _id[1];
+        return m_id[1];
     }
 
     /**
-         * constructor
-         *
-         * @param[in] id1 mesh id
-         * @param[in] id2 triangle id
-         */
+     * constructor
+     *
+     * @param[in] id1 mesh id
+     * @param[in] id2 triangle id
+     */
     TrianglePair(unsigned int id1, unsigned int id2)
     {
         if (id1 < id2)
         {
-            _id[0] = id1;
-            _id[1] = id2;
+            m_id[0] = id1;
+            m_id[1] = id2;
         }
         else
         {
-            _id[0] = id2;
-            _id[1] = id1;
+            m_id[0] = id2;
+            m_id[1] = id1;
         }
     }
     /**
-         * get mesh index and triangle index
-         *
-         * @param[out] id1 mesh index
-         * @param[out] id2 triangle index
-         */
+     * get mesh index and triangle index
+     *
+     * @param[out] id1 mesh index
+     * @param[out] id2 triangle index
+     */
     void get(unsigned int& id1, unsigned int& id2)
     {
-        id1 = _id[0];
-        id2 = _id[1];
+        id1 = m_id[0];
+        id2 = m_id[1];
     }
 
     /**
-         * operator < to define partial order of TrianglePair
-         *
-         * @param[in] other the TrianglePair to be compared with
-         */
+     * operator < to define partial order of TrianglePair
+     *
+     * @param[in] other the TrianglePair to be compared with
+     */
     bool operator<(const TrianglePair& other) const
     {
-        if (_id[0] == other._id[0])
-            return _id[1] < other._id[1];
+        if (m_id[0] == other.m_id[0])
+            return m_id[1] < other.m_id[1];
         else
-            return _id[0] < other._id[0];
+            return m_id[0] < other.m_id[0];
     }
+
+private:
+    unsigned int m_id[2];  //< ! mesh index - triangle index pair
 };
 
 template <typename TDataType>
@@ -122,6 +123,7 @@ public:
             t = c;
         return t;
     }
+
     static inline int project3(const Vector3f& ax,
                                const Vector3f& p1,
                                const Vector3f& p2,
@@ -140,6 +142,7 @@ public:
             return 0;
         return 1;
     }
+
     static inline int project6(Vector3f& ax,
                                Vector3f& p1,
                                Vector3f& p2,
@@ -166,6 +169,7 @@ public:
             return 0;
         return 1;
     }
+
     static bool
     tri_contact(Vector3f& P1, Vector3f& P2, Vector3f& P3, Vector3f& Q1, Vector3f& Q2, Vector3f& Q3)
     {
@@ -268,7 +272,5 @@ public:
 
         return tri_contact(p0, p1, p2, q0, q1, q2);
     }
-
-private:
 };
 }  // namespace PhysIKA

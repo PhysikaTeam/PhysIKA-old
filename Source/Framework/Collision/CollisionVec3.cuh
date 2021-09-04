@@ -15,6 +15,7 @@
 #define GLH_EPSILON_2 float(10e-12)
 #define is_equal2(a, b) (((a < b + GLH_EPSILON) && (a > b - GLH_EPSILON)) ? true : false)
 
+namespace PhysIKA {
 /**
   * warpper of atomic add function to handle different precision in different gpu
   *
@@ -24,7 +25,7 @@
   */
 inline __host__ __device__ float3 make_float3(const float s[])
 {
-    return make_float3(s[0], s[1], s[2]);
+    return ::make_float3(s[0], s[1], s[2]);
 }
 
 /**
@@ -51,7 +52,7 @@ inline __host__ __device__ float getI(const float3& a, int i)
  */
 inline __host__ __device__ float3 zero3f()
 {
-    return make_float3(0, 0, 0);
+    return ::make_float3(0, 0, 0);
 }
 
 /**
@@ -88,7 +89,7 @@ inline __host__ __device__ float stp(const float3& u, const float3& v, const flo
  */
 inline __host__ __device__ float3 operator-(const float3& a)
 {
-    return make_float3(-a.x, -a.y, -a.z);
+    return ::make_float3(-a.x, -a.y, -a.z);
 }
 
 /**
@@ -194,3 +195,4 @@ inline __device__ void atomicAdd3(float3* address, const float3& val)
     atomicAddD(&address->y, val.y);
     atomicAddD(&address->z, val.z);
 }
+}  // namespace PhysIKA

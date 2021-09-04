@@ -16,14 +16,14 @@ namespace PhysIKA {
  *
  * @param[in]     body          meshes for collision detection
  * @param[out]    contacts      collision triangle pairs
- * @param[out]    CCDtime       process time
+ * @param[out]    ccd_time      process time
  * @param[out]    impact        process time
  * @param[out]    thickness     thickness of face
  */
 void body_collide_gpu(
     std::vector<CollisionDate>              bodys,
     std::vector<std::vector<TrianglePair>>& contacts,
-    int&                                    CCDtime,
+    int&                                    ccd_time,
     std::vector<ImpactInfo>&                contact_info,
     float                                   thickness);
 }  // namespace PhysIKA
