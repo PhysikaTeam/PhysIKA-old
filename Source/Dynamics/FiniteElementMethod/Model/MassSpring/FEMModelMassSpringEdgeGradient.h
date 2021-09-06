@@ -21,6 +21,11 @@
 // #include "f2c.h"
 #include <cmath>
 
+/**
+ * @brief The gradinet of edge
+ * 
+ * @tparam T 
+ */
 template <typename T>
 /* Subroutine */ int EdgeGradient(T* __restrict x, T* __restrict k, T* __restrict l0, T* __restrict g)
 {

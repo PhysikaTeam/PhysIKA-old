@@ -31,7 +31,7 @@ using vec_vec_mat = std::vector<std::vector<Eigen::Matrix<T, row, col>, Eigen::a
  */
 template <typename T, size_t dim_, size_t field_, size_t num_per_cell_, size_t bas_order_, size_t qdrt_axis_, template <typename, size_t, size_t> class CSTTT,  // constituitive function
           template <typename, size_t, size_t, size_t, size_t>
-          class BASIS,  //  basis
+          class BASIS,  //!>  basis
           template <typename, size_t, size_t, size_t>
           class QDRT>  //
 class finite_element : public Functional<T, field_>
@@ -40,23 +40,63 @@ public:
     using basis = BASIS<T, dim_, field_, bas_order_, num_per_cell_>;
     using csttt = CSTTT<T, dim_, field_>;
     using qdrt  = QDRT<T, dim_, qdrt_axis_, num_per_cell_>;
+    /**
+     * @brief Construct a new finite element object
+     * 
+     * @param nods 
+     * @param cells 
+     */
     finite_element(const Eigen::Matrix<T, dim_, -1>&            nods,
                    const Eigen::Matrix<int, num_per_cell_, -1>& cells);
+    
+    /**
+     * @brief Get the number of dimension
+     * 
+     * @return size_t 
+     */
     size_t                   Nx() const;
+
+    /**
+     * @brief The Val function
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
     int                      Val(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) const;
+
+    /**
+     * @brief The Gra function
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
     int                      Gra(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) const;
+
+    /**
+     * @brief The Hes function
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
     int                      Hes(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) const;
     Eigen::Matrix<T, -1, -1> mtr_;
 
-protected:  //about elements
+protected:  //!< about elements
     const size_t                                all_dim_, num_nods_, num_cells_, num_qdrt_;
-    const Eigen::Matrix<T, dim_, -1>            nods_;   // vertices
-    const Eigen::Matrix<int, num_per_cell_, -1> cells_;  // elements
+    const Eigen::Matrix<T, dim_, -1>            nods_;   //!< vertices
+    const Eigen::Matrix<int, num_per_cell_, -1> cells_;  //!< elements
     const Eigen::Matrix<int, dim_, 1>           dim_all_rows_;
     const Eigen::Matrix<int, field_, 1>         field_all_rows_;
     const qdrt                                  quadrature_;
 
-protected:  // precomputed values
+protected:  //!< precomputed values
+    /**
+     * @brief Preceding computed values 
+     * 
+     */
     void                                                  PreComputation();
     vec_vec_mat<T, dim_, dim_>                            Dm_inv_;
     std::vector<std::vector<T>>                           Jac_det_;

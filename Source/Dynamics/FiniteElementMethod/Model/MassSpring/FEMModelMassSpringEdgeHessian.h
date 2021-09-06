@@ -24,12 +24,25 @@
 
 #include <cmath>
 
+/**
+ * @brief The pow function
+ * 
+ * @tparam T 
+ * @param b 
+ * @param a 
+ * @return T 
+ */
 template <typename T>
 T pow_dd(T* __restrict b, T* __restrict a)
 {
     return pow(*b, *a);
 }
 
+/**
+ * @brief The Hessian of edge
+ * 
+ * @tparam T 
+ */
 template <typename T>
 /* Subroutine */ int EdgeHessian(T* __restrict x, T* __restrict k, T* __restrict l0, T* __restrict h__)
 {

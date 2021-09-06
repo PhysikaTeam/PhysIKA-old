@@ -6,6 +6,18 @@
  */
 #pragma once
 
+/**
+ * @brief Write the line data to a data stream
+ * 
+ * @tparam OS 
+ * @tparam FLOAT 
+ * @tparam INT 
+ * @param os 
+ * @param node 
+ * @param node_num 
+ * @param line 
+ * @param line_num 
+ */
 template <typename OS, typename FLOAT, typename INT>
 void line2vtk(
     OS&          os,
@@ -29,6 +41,18 @@ void line2vtk(
         os << 3 << "\n";
 }
 
+/**
+ * @brief Write the point data to a data stream
+ * 
+ * @tparam OS 
+ * @tparam FLOAT 
+ * @tparam INT 
+ * @param os 
+ * @param node 
+ * @param node_num 
+ * @param points 
+ * @param points_num 
+ */
 template <typename OS, typename FLOAT, typename INT>
 void point2vtk(OS&          os,
                const FLOAT* node,
@@ -51,6 +75,18 @@ void point2vtk(OS&          os,
         os << 1 << "\n";
 }
 
+/**
+ * @brief Write the triangle data to a data stream
+ * 
+ * @tparam OS 
+ * @tparam FLOAT 
+ * @tparam INT 
+ * @param os 
+ * @param node 
+ * @param node_num 
+ * @param tri 
+ * @param tri_num 
+ */
 template <typename OS, typename FLOAT, typename INT>
 void tri2vtk(
     OS&          os,
@@ -73,6 +109,18 @@ void tri2vtk(
         os << 5 << "\n";
 }
 
+/**
+ * @brief Write the quadrilateral data to a data stream
+ * 
+ * @tparam OS 
+ * @tparam FLOAT 
+ * @tparam INT 
+ * @param os 
+ * @param node 
+ * @param node_num 
+ * @param quad 
+ * @param quad_num 
+ */
 template <typename OS, typename FLOAT, typename INT>
 void quad2vtk(
     OS&          os,
@@ -94,6 +142,19 @@ void quad2vtk(
     for (size_t i = 0; i < quad_num; ++i)
         os << 9 << "\n";
 }
+
+/**
+ * @brief Write the tetrahedron data to a data stream
+ * 
+ * @tparam OS 
+ * @tparam FLOAT 
+ * @tparam INT 
+ * @param os 
+ * @param node 
+ * @param node_num 
+ * @param tet 
+ * @param tet_num 
+ */
 template <typename OS, typename FLOAT, typename INT>
 void tet2vtk(
     OS&          os,
@@ -116,6 +177,19 @@ void tet2vtk(
     for (size_t i = 0; i < tet_num; ++i)
         os << 10 << "\n";
 }
+
+/**
+ * @brief Write the hexahedron data to a data stream
+ * 
+ * @tparam OS 
+ * @tparam FLOAT 
+ * @tparam INT 
+ * @param os 
+ * @param node 
+ * @param node_num 
+ * @param hex 
+ * @param hex_num 
+ */
 template <typename OS, typename FLOAT, typename INT>
 void hex2vtk(
     OS&          os,
@@ -152,6 +226,18 @@ void hex2vtk(
         os << 12 << "\n";
 }
 
+/**
+ * @brief Write the scalars data to a data stream
+ * 
+ * @tparam OS 
+ * @tparam Iterator 
+ * @tparam INT 
+ * @param os 
+ * @param first 
+ * @param size 
+ * @param value_name 
+ * @param table_name 
+ */
 template <typename OS, typename Iterator, typename INT>
 void vtk_data(OS& os, Iterator first, INT size, const char* value_name, const char* table_name = "my_table")
 {
@@ -160,6 +246,17 @@ void vtk_data(OS& os, Iterator first, INT size, const char* value_name, const ch
         os << *first << "\n";
 }
 
+/**
+ * @brief Write the vector data to a data stream
+ * 
+ * @tparam OS 
+ * @tparam Iterator 
+ * @tparam INT 
+ * @param os 
+ * @param first 
+ * @param size 
+ * @param vector_name 
+ */
 template <typename OS, typename Iterator, typename INT>
 void vtk_vector(OS& os, Iterator first, INT size, const char* vector_name)
 {

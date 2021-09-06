@@ -21,17 +21,38 @@ namespace PhysIKA {
 template <typename T, size_t dim_, size_t order_, size_t num_per_cell_>
 struct shape_func
 {
+    /**
+     * @brief Calculate the basis value
+     * 
+     * @param PNT 
+     * @param X 
+     * @return Eigen::Matrix<T, num_per_cell_, 1> 
+     */
     static Eigen::Matrix<T, num_per_cell_, 1> calc_basis_value(const Eigen::Matrix<T, dim_, 1>& PNT, const T* X)
     {
         assert(0);
         return Eigen::Matrix<T, num_per_cell_, 1>::Zero();
     }
+
+    /**
+     * @brief Calculate the Dhpi Dxi
+     * 
+     * @param PNT 
+     * @param X 
+     * @param Dphi_Dxi 
+     */
     static void calc_Dhpi_Dxi(const Eigen::Matrix<T, dim_, 1>& PNT, const T* X, Eigen::Matrix<T, num_per_cell_, dim_>& Dphi_Dxi)
     {
         std::cout << "unsupported type of basis func.\n";
         assert(0);
         return;
     }
+
+    /**
+     * @brief Get the volume of the object
+     * 
+     * @return double 
+     */
     static double volume()
     {
         assert(0);
@@ -49,6 +70,13 @@ struct shape_func
 template <typename T>
 struct shape_func<T, 3, 1, 4>
 {
+    /**
+     * @brief Calculate the Dhpi Dxi
+     * 
+     * @param PNT 
+     * @param X 
+     * @param Dphi_Dxi 
+     */
     static void calc_Dphi_Dxi(const Eigen::Matrix<T, 3, 1>& PNT, const T* X, Eigen::Matrix<T, 4, 3>& Dphi_Dxi)
     {
         Dphi_Dxi.setZero();
@@ -56,6 +84,12 @@ struct shape_func<T, 3, 1, 4>
         Dphi_Dxi.row(3) = Eigen::Matrix<T, 1, 3>::Ones() * (-1);
         return;
     }
+
+    /**
+     * @brief Get the volume of the object
+     * 
+     * @return double 
+     */
     static double volume()
     {
         return 1.0 / 6;
@@ -73,10 +107,23 @@ struct shape_func<T, 3, 1, 4>
 template <typename T>
 struct shape_func<T, 3, 1, 8>
 {
+    /**
+     * @brief Get the volume
+     * 
+     * @return double 
+     */
     static double volume()
     {
         return 8.0;
     }
+
+    /**
+     * @brief Calculate the basis value
+     * 
+     * @param PNT 
+     * @param X 
+     * @return Eigen::Matrix<T, 8, 1> 
+     */
     static Eigen::Matrix<T, 8, 1> calc_basis_value(const Eigen::Matrix<T, 3, 1>& PNT, const T* X)
     {
         Eigen::Matrix<T, 8, 1> basis_value = Eigen::Matrix<T, 8, 1>::Zero();
@@ -106,6 +153,13 @@ struct shape_func<T, 3, 1, 8>
         return basis_value;
     }
 
+    /**
+     * @brief Calculate the Dphi Dxi
+     * 
+     * @param PNT 
+     * @param X 
+     * @param Dphi_Dxi 
+     */
     static void calc_Dphi_Dxi(const Eigen::Matrix<T, 3, 1>& PNT, const T* X, Eigen::Matrix<T, 8, 3>& Dphi_Dxi)
     {
         Dphi_Dxi.setZero();
@@ -146,11 +200,26 @@ template <typename T, size_t dim_, size_t field_, size_t order_, size_t num_per_
 class basis_func
 {
 public:
+    /**
+     * @brief Calculate the Dphi Dxi
+     * 
+     * @param PNT 
+     * @param X 
+     * @param Dphi_Dxi 
+     */
     static void calc_Dphi_Dxi(const Eigen::Matrix<T, dim_, 1>& PNT, const T* X, Eigen::Matrix<T, num_per_cell_, dim_>& Dphi_Dxi)
     {
         return shape_func<T, dim_, order_, num_per_cell_>::calc_Dphi_Dxi(PNT, X, Dphi_Dxi);
     }
 
+    /**
+     * @brief Calculate the InvDm Det
+     * 
+     * @param Dphi_Dxi 
+     * @param X 
+     * @param Jac_det 
+     * @param Dm_inv 
+     */
     static void calc_InvDm_Det(const Eigen::Matrix<T, num_per_cell_, dim_>& Dphi_Dxi, const T* X, T& Jac_det, Eigen::Matrix<T, dim_, dim_>& Dm_inv)
     {
         Dm_inv.setZero();
@@ -160,6 +229,15 @@ public:
         Jac_det                                                          = fabs(Dm.determinant()) * shape_func<T, dim_, order_, num_per_cell_>::volume();
         return;
     }
+
+    /**
+     * @brief Get the def gra object
+     * 
+     * @param Dphi_Dxi 
+     * @param x 
+     * @param Dm_inv 
+     * @param def_gra 
+     */
     static void get_def_gra(const Eigen::Matrix<T, num_per_cell_, dim_>& Dphi_Dxi, const T* const x, const Eigen::Matrix<T, dim_, dim_>& Dm_inv, Eigen::Matrix<T, field_, dim_>& def_gra)
     {
         const Eigen::Map<const Eigen::Matrix<T, field_, num_per_cell_>> deformed(x);
@@ -167,6 +245,13 @@ public:
         return;
     }
 
+    /**
+     * @brief Get the Ddef Dx object
+     * 
+     * @param Dphi_Dxi 
+     * @param Dm_inv 
+     * @param Ddef_Dx 
+     */
     static void get_Ddef_Dx(const Eigen::Matrix<T, num_per_cell_, dim_>& Dphi_Dxi, const Eigen::Matrix<T, dim_, dim_>& Dm_inv, Eigen::Matrix<T, field_ * dim_, field_ * num_per_cell_>& Ddef_Dx)
     {
         Ddef_Dx.setZero();

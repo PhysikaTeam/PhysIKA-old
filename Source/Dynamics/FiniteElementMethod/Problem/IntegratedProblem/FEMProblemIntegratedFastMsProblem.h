@@ -25,12 +25,31 @@ template <typename T>
 class fast_ms_builder : public embedded_ms_problem_builder<T>
 {
 public:
+    /**
+     * @brief Construct a new fast_ms_builder object
+     * 
+     * @param x 
+     * @param pt 
+     */
     fast_ms_builder(const T* x, const boost::property_tree::ptree& pt);
 
+    /**
+     * @brief Get the fast ms solver info object
+     * 
+     * @return std::shared_ptr<fast_ms_info<T>> 
+     */
     std::shared_ptr<fast_ms_info<T>> get_fast_ms_solver_info() const
     {
         return solver_info_;
     }
+
+    /**
+     * @brief Update the problem object
+     * 
+     * @param x 
+     * @param v 
+     * @return int 
+     */
     virtual int update_problem(const T* x, const T* v = nullptr);
 
     using embedded_ms_problem_builder<T>::REST_;

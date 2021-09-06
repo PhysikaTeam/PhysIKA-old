@@ -18,9 +18,18 @@
 #include "FEMGeometryGetNN.h"
 
 namespace PhysIKA {
+/**
+ * @brief FEM Geometry PointCloud
+ * 
+ * @tparam T 
+ */
 template <typename T>
 struct PointCloud
 {
+    /**
+     * @brief Construct a new PointCloud object
+     * 
+     */
     struct Point
     {
         T x, y, z;
@@ -57,11 +66,38 @@ struct PointCloud
     }
 };
 
+/**
+ * @brief Get the noncoplanar tetrahedron object
+ * 
+ * @tparam FLOAT 
+ * @tparam dim_ 
+ * @param v 
+ * @param neigh_vert_idx 
+ * @param p 
+ * @return Eigen::Vector4i 
+ */
 template <typename FLOAT, size_t dim_>
 Eigen::Vector4i get_noncoplanar_tet(const Eigen::Matrix<FLOAT, dim_, -1>& v, const std::vector<size_t>& neigh_vert_idx, const Eigen::Matrix<FLOAT, dim_, 1>& p);
+
+/**
+ * @brief Interp the points in point cloud 
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @param v 
+ * @param pts 
+ * @param coef 
+ * @return int 
+ */
 template <typename T, size_t dim_>
 int interp_pts_in_point_cloud(const Eigen::Matrix<T, dim_, -1>& v, const Eigen::Matrix<T, dim_, -1>& pts, Eigen::SparseMatrix<T>& coef);
 
+/**
+ * @brief Change the data to the tetrahedron format from hexahedron
+ * 
+ * @param hexs 
+ * @return Eigen::MatrixXi 
+ */
 inline Eigen::MatrixXi hex_2_tet(const Eigen::Matrix<int, 8, -1>& hexs)
 {
     Eigen::MatrixXi tets = Eigen::MatrixXi::Zero(4, 5 * hexs.cols());
@@ -81,6 +117,18 @@ inline Eigen::MatrixXi hex_2_tet(const Eigen::Matrix<int, 8, -1>& hexs)
     }
     return tets;
 }
+
+/**
+ * @brief Interp the points in tetrahedron
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @param v 
+ * @param tet 
+ * @param pts 
+ * @param coef 
+ * @return int 
+ */
 template <typename T, size_t dim_>
 int interp_pts_in_tets(const Eigen::Matrix<T, dim_, -1>& v, const Eigen::Matrix<int, 4, -1>& tet, const Eigen::Matrix<T, dim_, -1>& pts, Eigen::SparseMatrix<T>& coef);
 

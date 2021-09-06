@@ -19,6 +19,14 @@
 using namespace std;
 using namespace Eigen;
 
+/**
+ * @brief determine whether the mesh intersect itself
+ * 
+ * @tparam T 
+ * @param path 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_mesh_self_intersection(const char* const path)
 {
@@ -45,6 +53,15 @@ bool is_mesh_self_intersection(const char* const path)
     return false;
 }
 
+/**
+ * @brief determine whether the triangles intersect themself
+ * 
+ * @tparam T 
+ * @param tri_a 
+ * @param tri_b 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_triangle_triangle_self_intersect(const Eigen::Matrix<T, 3, 3>& tri_a, const Eigen::Matrix<T, 3, 3>& tri_b)
 {
@@ -73,6 +90,13 @@ bool is_triangle_triangle_self_intersect(const Eigen::Matrix<T, 3, 3>& tri_a, co
     return is_it;
 }
 
+/**
+ * @brief determine whether the triangle is above a triangle
+ * 
+ * @param position 
+ * @return true 
+ * @return false 
+ */
 bool is_triangle_above_triangle(const std::array<int, 3>& position)
 {
     for (size_t i = 0; i < 3; ++i)
@@ -84,6 +108,16 @@ bool is_triangle_above_triangle(const std::array<int, 3>& position)
     return true;
 }
 
+/**
+ * @brief determine whether it is common condition
+ * 
+ * @tparam T 
+ * @param tri_a 
+ * @param tri_b 
+ * @param position_a2b 
+ * @param position_b2a 
+ * @return int 
+ */
 template <typename T>
 int is_common_condition(const Eigen::Matrix<T, 3, 3>& tri_a, const Eigen::Matrix<T, 3, 3>& tri_b, const std::array<int, 3>& position_a2b, const std::array<int, 3>& position_b2a)
 {
@@ -121,6 +155,13 @@ int is_common_condition(const Eigen::Matrix<T, 3, 3>& tri_a, const Eigen::Matrix
     return 2;
 }
 
+/**
+ * @brief determine whether it is universal connect
+ * 
+ * @param position 
+ * @return true 
+ * @return false 
+ */
 bool is_universal_connect(const std::array<int, 3>& position)
 {
     int sum_coplanar = accumulate(position.begin(), position.end(), 0, [](int b, int v) -> int {
@@ -159,6 +200,17 @@ bool is_triangle_degenerate(const Eigen::Matrix<T, 3, 3>& tri)
     return true;
 }
 
+/**
+ * @brief determine whether the triangles interesect
+ * 
+ * @tparam T 
+ * @param tri_a 
+ * @param tri_b 
+ * @param position_a2b 
+ * @param position_b2a 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_triangle_triangle_self_intersect(const Eigen::Matrix<T, 3, 3>& tri_a, const Eigen::Matrix<T, 3, 3>& tri_b, const std::array<int, 3>& position_a2b, const std::array<int, 3>& position_b2a)
 {
@@ -185,6 +237,15 @@ bool is_triangle_triangle_self_intersect(const Eigen::Matrix<T, 3, 3>& tri_a, co
     }
 }
 
+/**
+ * @brief determine whether the triangles interesect or are coplannar
+ * 
+ * @tparam T 
+ * @param tri_a 
+ * @param tri_b 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_coplanar_triangle_triangle_intersect(const Eigen::Matrix<T, 3, 3>& tri_a, const Eigen::Matrix<T, 3, 3>& tri_b)
 {
@@ -234,6 +295,17 @@ bool is_coplanar_triangle_triangle_intersect(const Eigen::Matrix<T, 3, 3>& tri_a
     return false;
 }
 
+/**
+ * @brief determine whether the vertex intersect the triangle
+ * 
+ * @tparam T 
+ * @param v 
+ * @param p 
+ * @param tri 
+ * @param coplanar_v_triangle 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_vert_triangle_intersect(const Eigen::Matrix<T, 3, 1>& v, const Eigen::Matrix<T, 3, 1>& p, const Eigen::Matrix<T, 3, 3>& tri, bool coplanar_v_triangle)
 {
@@ -312,6 +384,16 @@ bool is_vert_triangle_intersect(const Eigen::Matrix<T, 3, 1>& v, const Eigen::Ma
     }
 }
 
+/**
+ * @brief determine if the edge intersects the triangle or is coplanar
+ * 
+ * @tparam T 
+ * @param e 
+ * @param p 
+ * @param tri 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_coplanar_edge_triangle_intersect(const Eigen::Matrix<T, 3, 2>& e, const Eigen::Matrix<T, 3, 1>& p, const Eigen::Matrix<T, 3, 3>& tri)
 {
@@ -328,6 +410,16 @@ bool is_coplanar_edge_triangle_intersect(const Eigen::Matrix<T, 3, 2>& e, const 
     return false;
 }
 
+/**
+ * @brief determine whether the edge intersects the edge
+ * 
+ * @tparam T 
+ * @param e 
+ * @param et 
+ * @param p 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_edge_edge_intersect(const Eigen::Matrix<T, 3, 2>& e, const Eigen::Matrix<T, 3, 2>& et, const Eigen::Matrix<T, 3, 1>& p)
 {
@@ -347,6 +439,15 @@ bool is_edge_edge_intersect(const Eigen::Matrix<T, 3, 2>& e, const Eigen::Matrix
     return true;
 }
 
+/**
+ * @brief determine whether the triangles intersect
+ * 
+ * @tparam T 
+ * @param tri_a 
+ * @param tri_b 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_triangle_to_triangle_intersect(const Eigen::Matrix<T, 3, 3>& tri_a, const Eigen::Matrix<T, 3, 3>& tri_b)
 {
@@ -363,6 +464,15 @@ bool is_triangle_to_triangle_intersect(const Eigen::Matrix<T, 3, 3>& tri_a, cons
     return false;
 }
 
+/**
+ * @brief determine whether the edge intersect the triangle
+ * 
+ * @tparam T 
+ * @param e 
+ * @param tri 
+ * @return true 
+ * @return false 
+ */
 template <typename T>
 bool is_edge_triangle_intersect(const Eigen::Matrix<T, 3, 2>& e, const Eigen::Matrix<T, 3, 3>& tri)
 {

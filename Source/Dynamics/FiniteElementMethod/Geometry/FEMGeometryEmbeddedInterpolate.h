@@ -21,6 +21,15 @@ template <typename T>
 class embedded_interpolate
 {
 public:
+    /**
+     * @brief Construct a new embedded interpolate object
+     * 
+     * @param v 
+     * @param c2f_coeff 
+     * @param f2c_coeff 
+     * @param energy_hessian 
+     * @param alpha 
+     */
     embedded_interpolate(
         Eigen::Matrix<T, -1, -1>& v,
         Eigen::SparseMatrix<T>&   c2f_coeff,
@@ -53,6 +62,13 @@ public:
         }
     }
 
+    /**
+     * @brief Update the vertexs
+     * 
+     * @param fine 
+     * @param v_num 
+     * @return int 
+     */
     int update_verts(const T* fine, int v_num)
     {
         Eigen::Map<const Eigen::Matrix<T, -1, -1>> fine_verts(fine, 3, v_num);
@@ -85,18 +101,41 @@ public:
         return 0;
     }
 
+    /**
+     * @brief Get the coarse to fine coeff object
+     * 
+     * @return const Eigen::SparseMatrix<T>& 
+     */
     const Eigen::SparseMatrix<T>& get_coarse_to_fine_coeff() const
     {
         return coarse_to_fine_coeff_;
     }
+
+    /**
+     * @brief Get the fine to coarse coefficient object
+     * 
+     * @return const Eigen::SparseMatrix<T>& 
+     */
     const Eigen::SparseMatrix<T>& get_fine_to_coarse_coefficient() const
     {
         return fine_to_coarse_coeff_;
     }
+
+    /**
+     * @brief Get the vertexs
+     * 
+     * @return const Eigen::Matrix<T, -1, -1>& 
+     */
     const Eigen::Matrix<T, -1, -1>& get_verts() const
     {
         return verts_;
     }
+
+    /**
+     * @brief Set the vertexs
+     * 
+     * @param v 
+     */
     void set_verts(const Eigen::Matrix<T, -1, -1>& v)
     {
         verts_ = v;

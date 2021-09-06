@@ -24,14 +24,59 @@ template <typename T, size_t dim_>
 class position_constraint : public Functional<T, dim_>
 {
 public:
-    //used for displace based
+    // used for displace based
+    /**
+     * @brief Construct a new position constraint object
+     * 
+     * @param dof 
+     * @param w 
+     * @param cons 
+     */
     position_constraint(const size_t dof, const T& w, const std::vector<size_t>& cons);
 
-    //used for position based
+    // used for position based
+    /**
+     * @brief Construct a new position constraint object
+     * 
+     * @param rest 
+     * @param dof 
+     * @param w 
+     * @param cons 
+     */
     position_constraint(const T* rest, const size_t dof, const T& w, const std::vector<size_t>& cons);
+
+    /**
+     * @brief Get the value
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
     int    Val(const T* x, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the gradients
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
     int    Gra(const T* x, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the hessian
+     * 
+     * @param x 
+     * @param data 
+     * @return int 
+     */
     int    Hes(const T* x, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the number of dimension
+     * 
+     * @return size_t 
+     */
     size_t Nx() const;
 
 private:
@@ -49,10 +94,49 @@ template <typename T, size_t dim_>
 class gravity_energy : public Functional<T, dim_>
 {
 public:
+    /**
+     * @brief Construct a new gravity energy object
+     * 
+     * @param dof 
+     * @param w_g 
+     * @param gravity 
+     * @param mass 
+     * @param axis 
+     */
     gravity_energy(const size_t dof, const T& w_g, const T& gravity, const Eigen::Matrix<T, -1, 1>& mass, const char& axis);
+
+    /**
+     * @brief Get the value
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Val(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the gradients
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Gra(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the hesssian
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Hes(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the number of dimension
+     * 
+     * @return size_t 
+     */
     size_t Nx() const;
 
 private:
@@ -71,10 +155,50 @@ template <typename T, size_t dim_>
 class collision : public Functional<T, dim_>
 {
 public:
+    /**
+     * @brief Construct a new collision object
+     * 
+     * @param dim 
+     * @param w_coll 
+     * @param ground_axis 
+     * @param ground_pos 
+     * @param num_surf_point 
+     * @param init_points_ptr 
+     */
     collision(const size_t dim, const T& w_coll, const char& ground_axis, const T& ground_pos, const size_t& num_surf_point, const std::shared_ptr<Eigen::Matrix<T, -1, -1>>& init_points_ptr);
+    
+    /**
+     * @brief Get the value
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Val(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the gradients
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Gra(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the hessian
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Hes(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the Number of dimension
+     * 
+     * @return size_t 
+     */
     size_t Nx() const;
 
 private:
@@ -94,17 +218,84 @@ template <typename T, size_t dim_>
 class momentum : public Functional<T, dim_>
 {
 public:
-    //used for displacement based
+    // used for displacement based
+    /**
+     * @brief Construct a new momentum object
+     * 
+     * @param dof 
+     * @param mass_vec 
+     * @param dt 
+     */
     momentum(const size_t dof, const Eigen::Matrix<T, -1, 1>& mass_vec, const T& dt);
 
-    //used for position based
+    // used for position based
+    /**
+     * @brief Construct a new momentum object
+     * 
+     * @param x 
+     * @param dof 
+     * @param mass_vec 
+     * @param dt 
+     */
     momentum(const T* x, const size_t dof, const Eigen::Matrix<T, -1, 1>& mass_vec, const T& dt);
+
+    /**
+     * @brief Get the value
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Val(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the gradients
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Gra(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Get the hession
+     * 
+     * @param disp 
+     * @param data 
+     * @return int 
+     */
     int    Hes(const T* disp, data_ptr<T, dim_>& data) const;
+
+    /**
+     * @brief Update the location and velocity of the object
+     * 
+     * @param new_dispk_ptr 
+     * @param new_velo_ptr 
+     * @return int 
+     */
     int    update_location_and_velocity(const T* new_dispk_ptr, const T* new_velo_ptr);
+
+    /**
+     * @brief Set the initial velocity of the object
+     * 
+     * @param velo 
+     * @return int 
+     */
     int    set_initial_velocity(const Eigen::Matrix<T, dim_, 1>& velo);
+
+    /**
+     * @brief Update the object
+     * 
+     * @param x 
+     * @return int 
+     */
     int    update(const T* x);
+
+    /**
+     * @brief Get the number of dimension
+     * 
+     * @return size_t 
+     */
     size_t Nx() const;
 
     Eigen::Matrix<T, -1, 1> vk_, dispk_;

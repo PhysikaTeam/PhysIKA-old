@@ -44,6 +44,22 @@ int calc_mass_vector(const Eigen::Matrix<T, 3, -1>& nods, const Eigen::MatrixXi&
     return 0;
 }
 
+/**
+ * @brief Integrate mass calculator
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @tparam num_per_cell_ 
+ * @tparam bas_order_ 
+ * @tparam num_qdrt_ 
+ * @tparam BASIS 
+ * @tparam QDRT 
+ * @param nods 
+ * @param cells 
+ * @param rho 
+ * @param mass_vector 
+ * @return int 
+ */
 template <typename T, size_t dim_, size_t num_per_cell_, size_t bas_order_, size_t num_qdrt_, template <typename, size_t, size_t, size_t, size_t> class BASIS,  //  basis
           template <typename, size_t, size_t, size_t>
           class QDRT>  //

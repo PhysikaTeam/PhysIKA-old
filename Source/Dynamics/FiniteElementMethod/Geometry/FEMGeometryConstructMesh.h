@@ -15,6 +15,13 @@
 #include <set>
 #include <array>
 
+/**
+ * @brief Get the data of all edges 
+ * 
+ * @tparam D 
+ * @param cells 
+ * @return std::set<std::array<int, 2>> 
+ */
 template <typename D = int>
 std::set<std::array<int, 2>> GetAllEdges(const Eigen::Matrix<D, -1, -1>& cells)
 {
@@ -36,6 +43,16 @@ std::set<std::array<int, 2>> GetAllEdges(const Eigen::Matrix<D, -1, -1>& cells)
     return all_edges;
 }
 
+/**
+ * @brief Get the data of edge connection
+ * 
+ * @tparam T 
+ * @tparam D 
+ * @param cells 
+ * @param laplacian 
+ * @param edge_connect 
+ * @param edge_num 
+ */
 template <typename T = float, typename D = int>
 void GetMeshEdgeConnection(const Eigen::Matrix<D, -1, -1>& cells, Eigen::SparseMatrix<T>& laplacian, Eigen::SparseMatrix<T>& edge_connect, int& edge_num)
 {
@@ -73,6 +90,16 @@ void GetMeshEdgeConnection(const Eigen::Matrix<D, -1, -1>& cells, Eigen::SparseM
     laplacian.setFromTriplets(laplacian_ele_vec.begin(), laplacian_ele_vec.end());
     edge_connect.setFromTriplets(connect_ele.begin(), connect_ele.end());
 }
+
+/**
+ * @brief Get the original length of the edge
+ * 
+ * @tparam T 
+ * @tparam D 
+ * @param nods 
+ * @param cells 
+ * @return Eigen::Matrix<T, -1, 1> 
+ */
 template <typename T = float, typename D = int>
 Eigen::Matrix<T, -1, 1> GetEdgeOriginLength(const Eigen::Matrix<T, -1, -1>& nods, const Eigen::Matrix<int, -1, -1>& cells)
 {

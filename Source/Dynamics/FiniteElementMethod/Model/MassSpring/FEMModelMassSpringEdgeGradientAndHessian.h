@@ -12,6 +12,15 @@
 #include "FEMModelMassSpringEdgeEnergy.h"
 #include "FEMModelMassSpringEdgeHessian.h"
 
+/**
+ * @brief Get the Edge Energy object
+ * 
+ * @tparam T 
+ * @param x 
+ * @param K 
+ * @param l0 
+ * @return T 
+ */
 template <typename T>
 T GetEdgeEnergy(T* __restrict x, T K, T l0)
 {
@@ -20,6 +29,15 @@ T GetEdgeEnergy(T* __restrict x, T K, T l0)
     return E;
 }
 
+/**
+ * @brief Get the Edge Gradient object
+ * 
+ * @tparam T 
+ * @param x 
+ * @param K 
+ * @param l0 
+ * @return Eigen::Matrix<T, 6, 1> 
+ */
 template <typename T>
 Eigen::Matrix<T, 6, 1> GetEdgeGradient(T* __restrict x, T K, T l0)
 {
@@ -28,6 +46,15 @@ Eigen::Matrix<T, 6, 1> GetEdgeGradient(T* __restrict x, T K, T l0)
     return g;
 }
 
+/**
+ * @brief Get the Edge Hessian object
+ * 
+ * @tparam T 
+ * @param x 
+ * @param K 
+ * @param l0 
+ * @return Eigen::Matrix<T, 6, 6> 
+ */
 template <typename T>
 Eigen::Matrix<T, 6, 6> GetEdgeHessian(T* __restrict x, T K, T l0)
 {

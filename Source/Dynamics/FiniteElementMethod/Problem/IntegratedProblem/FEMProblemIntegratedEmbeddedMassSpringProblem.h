@@ -24,15 +24,44 @@ template <typename T>
 class embedded_ms_problem_builder : public ms_problem_builder<T>
 {
 public:
+    /**
+     * @brief Construct a new embedded_ms_problem_builder object
+     * 
+     * @param x 
+     * @param pt 
+     */
     embedded_ms_problem_builder(const T* x, const boost::property_tree::ptree& pt);
+    
+    /**
+     * @brief Construct a new embedded_ms_problem_builder object
+     * 
+     */
     embedded_ms_problem_builder() {}
 
+    /**
+     * @brief Update the problem object
+     * 
+     * @param x 
+     * @param v 
+     * @return int 
+     */
     virtual int update_problem(const T* x, const T* v = nullptr);
 
+    /**
+     * @brief Get the embedded interpolate object
+     * 
+     * @return std::shared_ptr<embedded_interpolate<T>> 
+     */
     std::shared_ptr<embedded_interpolate<T>> get_embedded_interpolate()
     {
         return embedded_interp_;
     }
+
+    /**
+     * @brief Get the semi implicit object
+     * 
+     * @return std::shared_ptr<semi_implicit<T>> 
+     */
     virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const
     {
         return semi_implicit_;

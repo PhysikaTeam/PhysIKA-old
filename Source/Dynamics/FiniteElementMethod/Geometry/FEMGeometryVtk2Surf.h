@@ -16,6 +16,12 @@ namespace PhysIKA {
 // just for triangle face now
 // TODO: let it
 
+/**
+ * @brief Sort the vertex data
+ * 
+ * @param V 
+ * @return Vector3i 
+ */
 Vector3i sort_v(const Vector3i& V)
 {
     auto sorted = V;
@@ -33,6 +39,13 @@ Vector3i sort_v(const Vector3i& V)
     return sorted;
 }
 
+/**
+ * @brief Get the surface data from vtk data
+ * 
+ * @param tets 
+ * @param surf 
+ * @return int 
+ */
 int vtk2surf(const MatrixXi& tets, MatrixXi& surf)
 {
     surf.setZero();

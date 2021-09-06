@@ -7,6 +7,13 @@ typedef std::function<bool(const std::array<size_t, 2>&, const std::array<size_t
 typedef std::function<size_t(const std::array<size_t, 3>&)>                             ArrayTripleFunc;
 typedef std::function<bool(const std::array<size_t, 3>&, const std::array<size_t, 3>&)> ArrayTwoTripleFunc;
 
+/**
+ * @brief Hash combine
+ * 
+ * @tparam T 
+ * @param seed 
+ * @param v 
+ */
 template <class T>
 inline void hash_combine(std::size_t& seed, const T& v)
 {
@@ -14,6 +21,14 @@ inline void hash_combine(std::size_t& seed, const T& v)
     seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 }
 
+/**
+ * @brief Hash function
+ * 
+ * @tparam T 
+ * @tparam d 
+ * @param key 
+ * @return std::size_t 
+ */
 template <typename T, size_t d>
 std::size_t HashFunc(const T& key)
 {
@@ -25,6 +40,14 @@ std::size_t HashFunc(const T& key)
     return value;
 }
 
+/**
+ * @brief Unordered hash function
+ * 
+ * @tparam T 
+ * @tparam d 
+ * @param key 
+ * @return std::size_t 
+ */
 template <typename T, size_t d>
 std::size_t UnorderedHashFunc(const T& key)
 {
@@ -39,6 +62,16 @@ std::size_t UnorderedHashFunc(const T& key)
     return value;
 }
 
+/**
+ * @brief Determine whether the keys are equal
+ * 
+ * @tparam T 
+ * @tparam d 
+ * @param lhs 
+ * @param rhs 
+ * @return true 
+ * @return false 
+ */
 template <typename T, size_t d>
 bool EqualKey(const T& lhs, const T& rhs)
 {
@@ -51,6 +84,16 @@ bool EqualKey(const T& lhs, const T& rhs)
     return true;
 }
 
+/**
+ * @brief Determine whether the unordered keys are equal
+ * 
+ * @tparam T 
+ * @tparam d 
+ * @param lhs 
+ * @param rhs 
+ * @return true 
+ * @return false 
+ */
 template <typename T, size_t d>
 bool UnorderedEqualKey(const T& lhs, const T& rhs)
 {

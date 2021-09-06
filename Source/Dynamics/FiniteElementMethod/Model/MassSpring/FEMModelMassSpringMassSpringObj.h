@@ -18,6 +18,12 @@ template <typename T>
 class MassSpringObj : public PhysIKA::Functional<T, 3>
 {
 public:
+    /**
+     * @brief Construct a new MassSpringObj object
+     * 
+     * @param path 
+     * @param stiffness 
+     */
     MassSpringObj(const char* path, T stiffness);
     // function of Functional
     virtual size_t Nx() const;

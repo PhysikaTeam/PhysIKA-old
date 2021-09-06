@@ -2,6 +2,10 @@
 
 #include <Eigen/Core>
 
+/**
+ * @brief Compare two 3d vertexs
+ * 
+ */
 struct VertComp
 {
     bool operator()(const Eigen::Vector3d& v1, const Eigen::Vector3d& v2) const
@@ -17,6 +21,10 @@ struct VertComp
     }
 };
 
+/**
+ * @brief Compare two 2d vertexs
+ * 
+ */
 struct Vert2DComp
 {
     bool operator()(const Eigen::Vector2d& v1, const Eigen::Vector2d& v2) const
@@ -32,6 +40,10 @@ struct Vert2DComp
 
 typedef Eigen::Matrix<size_t, 3, 1> Vector3st;
 
+/**
+ * @brief Compare two ids
+ * 
+ */
 struct IdComp
 {
     bool operator()(const Vector3st& id1, const Vector3st& id2) const

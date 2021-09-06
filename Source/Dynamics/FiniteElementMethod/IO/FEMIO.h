@@ -17,19 +17,100 @@
 
 namespace PhysIKA {
 
+/**
+ * @brief Read the fixed vertexs data from a csv file
+ * 
+ * @param filename 
+ * @param fixed 
+ * @param pos 
+ * @return int 
+ */
 int read_fixed_verts_from_csv(const char* filename, std::vector<size_t>& fixed, Eigen::MatrixXd* pos = nullptr);
 
+/**
+ * @brief Write the MAT data to a file
+ * 
+ * @param path 
+ * @param A 
+ * @return int 
+ */
 int write_MAT(const char* path, const Eigen::MatrixXd& A);
+
+/**
+ * @brief Write the SPM data to a file
+ * 
+ * @param path 
+ * @param A 
+ * @return int 
+ */
 int write_SPM(const char* path, const Eigen::SparseMatrix<double, Eigen::RowMajor>& A);
+
+/**
+ * @brief Write the SPM data to a file
+ * 
+ * @param path 
+ * @param A 
+ * @return int 
+ */
 int write_SPM(const char* path, const Eigen::SparseMatrix<float, Eigen::RowMajor>& A);
 
+/**
+ * @brief Write the triangle mesh data to a file in vtk format
+ * 
+ * @param path 
+ * @param nods 
+ * @param tris 
+ * @param mtr 
+ * @return int 
+ */
 int tri_mesh_write_to_vtk(const char* path, const Eigen::MatrixXd& nods, const Eigen::MatrixXi& tris, const Eigen::MatrixXd* mtr = nullptr);
 // int quad_mesh_write_to_vtk(const char *path, const matd_t &nods, const mati_t &quad,
 //                            const matd_t *mtr=nullptr, const char *type="CELL");
+
+/**
+ * @brief Write the points to a file in vtk format
+ * 
+ * @param path 
+ * @param nods 
+ * @param num_points 
+ * @return int 
+ */
 int point_write_to_vtk(const char* path, const double* nods, const size_t num_points);
+
+/**
+ * @brief Append the points to a file in vtk format
+ * 
+ * @param is_append 
+ * @param path 
+ * @param vectors 
+ * @param num_vecs 
+ * @param vector_name 
+ * @return int 
+ */
 int point_vector_append2vtk(const bool is_append, const char* path, const Eigen::MatrixXd& vectors, const size_t num_vecs, const char* vector_name);
+
+/**
+ * @brief Write the scalar data of points to a file in vtk format
+ * 
+ * @param is_append 
+ * @param path 
+ * @param scalars 
+ * @param num_sca 
+ * @param scalar_name 
+ * @return int 
+ */
 int point_scalar_append2vtk(const bool is_append, const char* path, const Eigen::VectorXd& scalars, const size_t num_sca, const char* scalar_name);
 
+/**
+ * @brief Read the mesh data from a vtk file
+ * 
+ * @tparam T 
+ * @tparam num_vert 
+ * @tparam dim 
+ * @param filename 
+ * @param nods 
+ * @return int 
+ */
 template <typename T, size_t num_vert, size_t dim = 3>
 int mesh_read_from_vtk(const char* filename, Eigen::Matrix<T, -1, -1>& nods)
 {
@@ -67,6 +148,18 @@ int mesh_read_from_vtk(const char* filename, Eigen::Matrix<T, -1, -1>& nods)
     return 0;
 }
 
+/**
+ * @brief Read the mesh data from a vtk file
+ * 
+ * @tparam T 
+ * @tparam num_vert 
+ * @tparam dim 
+ * @param filename 
+ * @param nods 
+ * @param cells 
+ * @param mtr 
+ * @return int 
+ */
 template <typename T, size_t num_vert, size_t dim = 3>
 int mesh_read_from_vtk(const char* filename, Eigen::Matrix<T, -1, -1>& nods, Eigen::MatrixXi& cells, T* mtr = nullptr)
 {
@@ -160,6 +253,19 @@ int mesh_read_from_vtk(const char* filename, Eigen::Matrix<T, -1, -1>& nods, Eig
 
     return 0;
 }
+
+/**
+ * @brief Write the mesh data to a vtk file
+ * 
+ * @tparam FLOAT 
+ * @tparam num_vert 
+ * @param path 
+ * @param nods 
+ * @param cells 
+ * @param mtr 
+ * @param dim 
+ * @return int 
+ */
 template <typename FLOAT, size_t num_vert>
 int mesh_write_to_vtk(const char* path, const Eigen::Ref<Eigen::Matrix<FLOAT, -1, -1>> nods, const Eigen::Ref<Eigen::MatrixXi> cells, const Eigen::Matrix<FLOAT, -1, -1>* mtr = nullptr, size_t dim = 3)
 {

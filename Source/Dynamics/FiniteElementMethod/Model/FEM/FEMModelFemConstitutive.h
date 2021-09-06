@@ -26,17 +26,44 @@ class constitutive
 {
 public:
     static T
+    /**
+     * @brief Get the value
+     * 
+     * @param F 
+     * @param mtr 
+     */
     val(const Eigen::Matrix<T, field_, dim_>& F,
         const Eigen::Matrix<T, -1, 1>&        mtr);
     static Eigen::Matrix<T, field_ * dim_, 1>
+
+    /**
+     * @brief Get the gradients
+     * 
+     * @param F 
+     * @param mtr 
+     */
     gra(const Eigen::Matrix<T, field_, dim_>& F,
         const Eigen::Matrix<T, -1, 1>&        mtr);
 
+    /**
+     * @brief Get the hessian
+     * 
+     * @param F 
+     * @param mtr 
+     * @return Eigen::Matrix<T, field_ * dim_, field_ * dim_> 
+     */
     static Eigen::Matrix<T, field_ * dim_, field_ * dim_>
     hes(const Eigen::Matrix<T, field_, dim_>& F,
         const Eigen::Matrix<T, -1, 1>&        mtr);
 };
 
+/**
+ * @brief FEM Model quadratic_csttt
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @tparam field_ 
+ */
 template <typename T, size_t dim_, size_t field_>
 class quadratic_csttt : public constitutive<T, dim_, field_>
 {
@@ -65,11 +92,25 @@ public:
     }
 };
 
+/**
+ * @brief  FEM Model elas_csttt
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @tparam field_ 
+ */
 template <typename T, size_t dim_, size_t field_>
 class elas_csttt : public constitutive<T, dim_, field_>
 {
 };
 
+/**
+ * @brief FEM Model arap_csttt
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @tparam field_ 
+ */
 template <typename T, size_t dim_, size_t field_>
 class arap_csttt : public constitutive<T, dim_, field_>
 {
@@ -111,6 +152,13 @@ public:
     }
 };
 
+/**
+ * @brief FEM Model linear_csttt
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @tparam field_ 
+ */
 template <typename T, size_t dim_, size_t field_>
 class linear_csttt : public elas_csttt<T, dim_, field_>
 {
@@ -179,6 +227,13 @@ public:
     }
 };
 
+/**
+ * @brief FEM Model stvk
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @tparam field_ 
+ */
 template <typename T, size_t dim_, size_t field_>
 class stvk : public elas_csttt<T, dim_, field_>
 {
@@ -265,6 +320,13 @@ public:
     }
 };
 
+/**
+ * @brief FEM Model corotated_csttt
+ * 
+ * @tparam T 
+ * @tparam dim_ 
+ * @tparam field_ 
+ */
 template <typename T, size_t dim_, size_t field_>
 class corotated_csttt : public constitutive<T, dim_, field_>
 {

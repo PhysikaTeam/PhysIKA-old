@@ -22,6 +22,11 @@
 
 #include <cmath>
 
+/**
+ * @brief The energy of edge
+ * 
+ * @tparam T 
+ */
 template <typename T>
 /* Subroutine */ int EdgeEnergy(T* __restrict x, T* __restrict k, T* __restrict l0, T* __restrict v)
 {

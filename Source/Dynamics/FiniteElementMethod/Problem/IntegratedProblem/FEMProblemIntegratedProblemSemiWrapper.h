@@ -16,8 +16,18 @@ template <typename T>
 class semi_wrapper
 {
 public:
+    /**
+     * @brief Construct a new semi_wrapper object
+     * 
+     */
     semi_wrapper()
         : semi_implicit_(nullptr) {}
+
+    /**
+     * @brief Get the semi implicit object
+     * 
+     * @return std::shared_ptr<semi_implicit<T>> 
+     */
     virtual std::shared_ptr<semi_implicit<T>> get_semi_implicit() const
     {
         return semi_implicit_;

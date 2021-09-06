@@ -56,6 +56,10 @@ class quadrature
 public:
     Eigen::Matrix<T, dim_, -1> PNT_;
     std::vector<T>             WGT_;
+    /**
+     * @brief Construct a new quadrature object
+     * 
+     */
     quadrature()
     {
         const size_t qdrt_num = static_cast<size_t>(pow(qdrt_axis_, dim_));
@@ -67,6 +71,12 @@ public:
     }
 
 private:
+    /**
+     * @brief Initialize the object
+     * 
+     * @param idx 
+     * @param PNT_id 
+     */
     void init(std::vector<size_t>& idx, size_t PNT_id)
     {
         const size_t depth = idx.size();
