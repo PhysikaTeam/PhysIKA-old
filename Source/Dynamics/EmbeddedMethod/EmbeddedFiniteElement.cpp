@@ -6,8 +6,8 @@
 #include "Framework/Mapping/PointSetToPointSet.h"
 #include "Framework/Topology/NeighborQuery.h"
 #include "EmbeddedIntegrator.h"
-#include "Problem/integrated_problem/embedded_elas_fem_problem.h"
-#include "Solver/newton_method.h"
+#include "FiniteElementMethod/Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedElasFemProblem.h"
+#include "FiniteElementMethod/Solver/FEMSolverNewtonMethod.h"
 #include "Dynamics/ParticleSystem/ElasticityModule.h"
 #include <iostream>
 #include <string>

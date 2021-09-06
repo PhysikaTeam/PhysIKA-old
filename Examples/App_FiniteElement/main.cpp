@@ -8,7 +8,7 @@
 #include "Rendering/SurfaceMeshRender.h"
 #include "Rendering/PointRenderModule.h"
 #include <boost/property_tree/json_parser.hpp>
-#include "Dynamics/FiniteElementMethod/Source/Geometry/surf2tet.h"
+#include "Dynamics/FiniteElementMethod/Geometry/FEMGeometrySurf2Tet.h"
 
 #include "Framework/Topology/TriangleSet.h"
 

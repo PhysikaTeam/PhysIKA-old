@@ -11,10 +11,10 @@
 #include "Framework/Framework/FieldVar.h"
 #include "Framework/Framework/Node.h"
 #include "Framework/Framework/SceneGraph.h"
-#include "Problem/integrated_problem/embedded_elas_fem_problem.h"
-#include "Problem/integrated_problem/fast_ms_problem.h"
-#include "Common/data_str_core.h"
-#include "Solver/solver_lists.h"
+#include "FiniteElementMethod/Problem/IntegratedProblem/FEMProblemIntegratedEmbeddedElasFemProblem.h"
+#include "FiniteElementMethod/Problem/IntegratedProblem/FEMProblemIntegratedFastMsProblem.h"
+#include "FiniteElementMethod/Common/FEMCommonDataStream.h"
+#include "FiniteElementMethod/Solver/FEMSolverLists.h"
 #include "EmbeddedIntegrator.h"
 
 using namespace std;
