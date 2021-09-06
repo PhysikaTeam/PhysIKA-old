@@ -84,14 +84,14 @@ public:
      * @brief Clear the SimpleCell Object
      * 
      */
-    void   clear();
+    void clear();
 
     /**
      * @brief Add face to the object
      * 
      * @param input_face 
      */
-    void   AddFace(const SimpleFace& input_face);
+    void AddFace(const SimpleFace& input_face);
 
     /**
      * @brief Compute the volume of the cell
@@ -113,7 +113,7 @@ public:
      * 
      * @param file 
      */
-    void   cell_write_to_file(std::ofstream& file);
+    void cell_write_to_file(std::ofstream& file);
 };
 
 /**

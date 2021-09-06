@@ -57,6 +57,12 @@ public:
         std::shared_ptr<fast_ms_info<T>>         solver_info)
         : newton_base_with_embedded<T, dim_>(pb, max_iter, tol, line_search, hes_is_constant, linear_solver, dat_str, dof_of_nods, embedded_interp, semi), solver_info_(solver_info) {}
 
+    /**
+     * @brief solve the problem using fast mass spring method.
+     * 
+     * @param x_star 
+     * @return int 
+     */
     virtual int solve(T* x_star) const;
 
     using newton_base_with_embedded<T, dim_>::solve_linear_eq;

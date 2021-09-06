@@ -56,7 +56,7 @@ struct KdTree
      * @param path 
      * @return int 
      */
-    int                                 build_tree(const char* const path);
+    int build_tree(const char* const path);
 
     /**
      * @brief Set the up tree object
@@ -65,7 +65,7 @@ struct KdTree
      * @param axis 
      * @return Node<T>* 
      */
-    Node<T>*                            setup_tree(const std::vector<size_t>& table_t, size_t axis);
+    Node<T>* setup_tree(const std::vector<size_t>& table_t, size_t axis);
 
     /**
      * @brief Get the tri soup object
@@ -73,7 +73,7 @@ struct KdTree
      * @param path 
      * @return int 
      */
-    int                                 get_tri_soup(const char* const path);
+    int get_tri_soup(const char* const path);
 
     /**
      * @brief destory the tree
@@ -81,14 +81,14 @@ struct KdTree
      * @param ptr 
      * @return int 
      */
-    int                                 destory_tree(Node<T>* ptr);
+    int destory_tree(Node<T>* ptr);
 
     /**
      * @brief Get the tri num object
      * 
      * @return size_t 
      */
-    size_t                              get_tri_num() const;
+    size_t get_tri_num() const;
 
     /**
      * @brief Get the tri object
@@ -96,7 +96,7 @@ struct KdTree
      * @param id_tri 
      * @return Eigen::Matrix<T, 3, 3> 
      */
-    Eigen::Matrix<T, 3, 3>              get_tri(size_t id_tri) const;
+    Eigen::Matrix<T, 3, 3> get_tri(size_t id_tri) const;
 
     /**
      * @brief Get the neigh tri object
@@ -114,7 +114,7 @@ struct KdTree
      * @param table_neigh_tri 
      * @return int 
      */
-    int                                 get_neigh_tri(const Eigen::Matrix<T, 3, 2>& aabb, const Node<T>* const ptr, std::vector<size_t>& table_neigh_tri) const;
+    int get_neigh_tri(const Eigen::Matrix<T, 3, 2>& aabb, const Node<T>* const ptr, std::vector<size_t>& table_neigh_tri) const;
 
     /**
      * @brief Get the aabb object
@@ -122,8 +122,8 @@ struct KdTree
      * @param table_tri 
      * @return Eigen::Matrix<T, 3, 2> 
      */
-    Eigen::Matrix<T, 3, 2>              get_aabb(
-                     const std::vector<size_t>& table_tri) const;
+    Eigen::Matrix<T, 3, 2> get_aabb(
+        const std::vector<size_t>& table_tri) const;
 
     /**
      * @brief Get the tri center object

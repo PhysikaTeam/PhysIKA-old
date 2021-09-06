@@ -120,7 +120,7 @@ public:
      * @param id_v 
      * @return std::vector<size_t> 
      */
-    std::vector<size_t>            get_vert_neigh_face(size_t id_v) const;
+    std::vector<size_t> get_vert_neigh_face(size_t id_v) const;
 
     /**
      * @brief Get the face neigh face object
@@ -128,7 +128,7 @@ public:
      * @param id_f 
      * @return std::vector<size_t> 
      */
-    std::vector<size_t>            get_face_neigh_face(size_t id_f) const;
+    std::vector<size_t> get_face_neigh_face(size_t id_f) const;
 
     /**
      * @brief Get the tri object
@@ -136,7 +136,7 @@ public:
      * @param id_f 
      * @return Eigen::Matrix3d 
      */
-    Eigen::Matrix3d                get_tri(size_t id_f) const;
+    Eigen::Matrix3d get_tri(size_t id_f) const;
 
     /**
      * @brief Get the tri edge object
@@ -144,7 +144,7 @@ public:
      * @param face_id 
      * @return std::array<size_t, 3> 
      */
-    std::array<size_t, 3>          get_tri_edge(size_t face_id) const;
+    std::array<size_t, 3> get_tri_edge(size_t face_id) const;
 
     /**
      * @brief Get the tri vert id object
@@ -152,7 +152,7 @@ public:
      * @param id_f 
      * @return std::array<size_t, 3> 
      */
-    std::array<size_t, 3>          get_tri_vert_id(size_t id_f) const;
+    std::array<size_t, 3> get_tri_vert_id(size_t id_f) const;
 
     /**
      * @brief Get the vert object
@@ -160,7 +160,7 @@ public:
      * @param id_v 
      * @return const Eigen::Vector3d& 
      */
-    const Eigen::Vector3d&         get_vert(size_t id_v) const;
+    const Eigen::Vector3d& get_vert(size_t id_v) const;
 
     /**
      * @brief Get the edge neighbor face object
@@ -168,7 +168,7 @@ public:
      * @param edge_id 
      * @return std::array<size_t, 2> 
      */
-    std::array<size_t, 2>          get_edge_neighbor_face(size_t edge_id) const;
+    std::array<size_t, 2> get_edge_neighbor_face(size_t edge_id) const;
 
     /**
      * @brief Get the edge vert id object
@@ -176,8 +176,8 @@ public:
      * @param edge_id 
      * @return std::array<size_t, 2> 
      */
-    std::array<size_t, 2>          get_edge_vert_id(size_t edge_id) const;
-    
+    std::array<size_t, 2> get_edge_vert_id(size_t edge_id) const;
+
     /**
      * @brief Get the edge object
      * 
@@ -191,13 +191,13 @@ public:
      * 
      * @return Eigen::MatrixXd 
      */
-    Eigen::MatrixXd                get_aabb() const;
+    Eigen::MatrixXd get_aabb() const;
     /**
      * @brief unordered edge which half edge is derivated from
      * 
      * @return std::vector<size_t> 
      */
-    std::vector<size_t>                             get_unordered_edge_id() const;
+    std::vector<size_t> get_unordered_edge_id() const;
 
     /**
      * @brief Set the face connect object
@@ -205,7 +205,7 @@ public:
      * @param f1 
      * @param f2 
      */
-    void                                            set_face_connect(size_t f1, size_t f2);
+    void set_face_connect(size_t f1, size_t f2);
 
     /**
      * @brief determine whether the faces are connected
@@ -215,7 +215,7 @@ public:
      * @return true 
      * @return false 
      */
-    bool                                            is_face_connect(size_t f1, size_t f2) const;
+    bool is_face_connect(size_t f1, size_t f2) const;
 
     /**
      * @brief Get the face group object

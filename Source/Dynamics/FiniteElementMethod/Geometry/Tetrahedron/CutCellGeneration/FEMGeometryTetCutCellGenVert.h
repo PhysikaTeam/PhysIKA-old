@@ -41,7 +41,7 @@ public:
      * @param mesh 
      * @return int 
      */
-    static int                    init_vert(Mesh* mesh);
+    static int init_vert(Mesh* mesh);
 
     /**
      * @brief Set the grid line object
@@ -50,7 +50,7 @@ public:
      * @param grid 
      * @return int 
      */
-    int                           set_grid_line(size_t axis, size_t grid);
+    int set_grid_line(size_t axis, size_t grid);
 
     /**
      * @brief Get the grid line object
@@ -58,14 +58,14 @@ public:
      * @param axis 
      * @return size_t 
      */
-    size_t                        get_grid_line(size_t axis) const;
+    size_t get_grid_line(size_t axis) const;
 
     /**
      * @brief Get the vert id object
      * 
      * @return size_t 
      */
-    size_t                        get_vert_id() const;
+    size_t get_vert_id() const;
 
     /**
      * @brief Set the id object
@@ -73,7 +73,7 @@ public:
      * @param id 
      * @return int 
      */
-    int                           set_id(size_t id);
+    int set_id(size_t id);
 
     /**
      * @brief Determine whether the vertex is on axis grid
@@ -83,14 +83,14 @@ public:
      * @return true 
      * @return false 
      */
-    bool                          is_vert_on_axis_grid(size_t axis, size_t id_grid) const;
+    bool is_vert_on_axis_grid(size_t axis, size_t id_grid) const;
 
     /**
      * @brief Get the grid id object
      * 
      * @return const Vector3st& 
      */
-    const Vector3st&              get_grid_id() const;
+    const Vector3st& get_grid_id() const;
 
     /**
      * @brief Determine whether the vertexs is the same
@@ -110,7 +110,7 @@ public:
      * @param id_grid_line 
      * @return int 
      */
-    virtual int  get_edge_vert_info(size_t& id_v1, size_t& id_v2, size_t& axis, size_t& id_grid_line) const;
+    virtual int get_edge_vert_info(size_t& id_v1, size_t& id_v2, size_t& axis, size_t& id_grid_line) const;
 
     /**
      * @brief Get the line vert info object
@@ -122,12 +122,12 @@ public:
      * @param id_tri 
      * @return int 
      */
-    virtual int  get_line_vert_info(
-         size_t& a1,
-         size_t& a2,
-         size_t& g1,
-         size_t& g2,
-         size_t& id_tri) const;
+    virtual int get_line_vert_info(
+        size_t& a1,
+        size_t& a2,
+        size_t& g1,
+        size_t& g2,
+        size_t& id_tri) const;
 
     /**
      * @brief Determine whether the vertex is a triangle vertex
@@ -174,7 +174,7 @@ public:
      * 
      * @return int 
      */
-    int  set_vert_on_triangle_edge();
+    int set_vert_on_triangle_edge();
 
     /**
      * @brief Determine whether on a triangle edge
@@ -189,7 +189,7 @@ public:
      * 
      * @return int 
      */
-    int  set_vert_on_triangle_vert();
+    int set_vert_on_triangle_vert();
 
     /**
      * @brief Get the triangle id object
@@ -205,7 +205,7 @@ public:
      * @param v2_e 
      * @return int 
      */
-    int                         set_edge_v(size_t v1_e, size_t v2_e);
+    int set_edge_v(size_t v1_e, size_t v2_e);
 
     /**
      * @brief Get the edge v object
@@ -214,7 +214,7 @@ public:
      * @param v2_e 
      * @return int 
      */
-    int                         get_edge_v(size_t& v1_e, size_t& v2_e) const;
+    int get_edge_v(size_t& v1_e, size_t& v2_e) const;
 
     /**
      * @brief Get the edge vert object
@@ -269,7 +269,7 @@ public:
      * @return true 
      * @return false 
      */
-    virtual bool                  is_same_vert_with(size_t id_v) const;
+    virtual bool is_same_vert_with(size_t id_v) const;
 
     /**
      * @brief Get the edge vert info object
@@ -280,7 +280,7 @@ public:
      * @param id_grid_line 
      * @return int 
      */
-    virtual int                   get_edge_vert_info(size_t& id_v1, size_t& id_v2, size_t& axis, size_t& id_grid_line) const;
+    virtual int get_edge_vert_info(size_t& id_v1, size_t& id_v2, size_t& axis, size_t& id_grid_line) const;
 
     /**
      * @brief Get the triangle id object
@@ -296,7 +296,7 @@ public:
      * @param v2 
      * @return int 
      */
-    virtual int                 get_edge_vert(size_t& v1, size_t& v2) const;
+    virtual int get_edge_vert(size_t& v1, size_t& v2) const;
 
     /**
      * @brief Determine whether the vertex is on a triangle edge
@@ -304,7 +304,7 @@ public:
      * @return true 
      * @return false 
      */
-    virtual bool                is_triangle_vert() const;
+    virtual bool is_triangle_vert() const;
 
     /**
      * @brief Determine whether the vertex is on a triangle edge
@@ -312,7 +312,7 @@ public:
      * @return true 
      * @return false 
      */
-    virtual bool                is_edge_vert() const;
+    virtual bool is_edge_vert() const;
 
 private:
     size_t id_v_[2];
@@ -348,7 +348,7 @@ public:
      * @return true 
      * @return false 
      */
-    virtual bool                  is_same_vert_with(size_t id_v) const;
+    virtual bool is_same_vert_with(size_t id_v) const;
 
     /**
      * @brief Get the line vert info object
@@ -360,12 +360,12 @@ public:
      * @param id_tri 
      * @return int 
      */
-    virtual int                   get_line_vert_info(
-                          size_t& a1,
-                          size_t& a2,
-                          size_t& g1,
-                          size_t& g2,
-                          size_t& id_tri) const;
+    virtual int get_line_vert_info(
+        size_t& a1,
+        size_t& a2,
+        size_t& g1,
+        size_t& g2,
+        size_t& id_tri) const;
 
     /**
      * @brief Determine whether the object is a triangle vertex
@@ -416,7 +416,7 @@ public:
      * @return true 
      * @return false 
      */
-    virtual bool                  is_same_vert_with(size_t id_v) const;
+    virtual bool is_same_vert_with(size_t id_v) const;
 
     /**
      * @brief Get the vert coord object
@@ -431,7 +431,7 @@ public:
      * @return true 
      * @return false 
      */
-    virtual bool                  is_triangle_vert() const;
+    virtual bool is_triangle_vert() const;
 
     /**
      * @brief Determine whether the object is a grid vertex
@@ -439,5 +439,5 @@ public:
      * @return true 
      * @return false 
      */
-    virtual bool                  is_grid_vert() const;
+    virtual bool is_grid_vert() const;
 };

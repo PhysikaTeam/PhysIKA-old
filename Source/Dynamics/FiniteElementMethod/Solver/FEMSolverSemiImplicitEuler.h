@@ -27,25 +27,51 @@ public:
         mass_ = Eigen::kroneckerProduct(mass_, Eigen::Matrix<T, 3, 1>::Ones()).eval();
         v_    = Eigen::Matrix<T, -1, 1>::Zero(mass_.size());
     }
+    /**
+     * @brief update x status.
+     * 
+     * @param x 
+     */
     void update_status(const Eigen::Matrix<T, -1, 1>& x)
     {
         x_ = x;
         // v_ = v;
     }
 
+    /**
+     * @brief Get the velocity object
+     * 
+     * @return Eigen::Matrix<T, -1, 1> 
+     */
     Eigen::Matrix<T, -1, 1> get_velocity() const
     {
         return v_;
     }
+    /**
+     * @brief Get the position object
+     * 
+     * @return Eigen::Matrix<T, -1, 1> 
+     */
     Eigen::Matrix<T, -1, 1> get_position() const
     {
         return x_;
     }
+    /**
+     * @brief Get the mass object
+     * 
+     * @return Eigen::Matrix<T, -1, 1> 
+     */
     Eigen::Matrix<T, -1, 1> get_mass() const
     {
         return mass_;
     }
 
+    /**
+     * @brief solve the PDE using semi implicit euler method.
+     * 
+     * @param Jaccobi 
+     * @return Eigen::Matrix<T, -1, 1> 
+     */
     Eigen::Matrix<T, -1, 1> solve(const Eigen::Matrix<T, -1, 1>& Jaccobi)
     {
         x_ = x_ + h_ * v_;

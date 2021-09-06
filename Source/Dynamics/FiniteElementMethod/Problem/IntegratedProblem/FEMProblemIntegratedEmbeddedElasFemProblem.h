@@ -58,7 +58,7 @@ public:
     {
         return REST_;
     }
-    
+
     /**
      * @brief Get the cells object
      * 

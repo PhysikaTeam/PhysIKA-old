@@ -48,13 +48,13 @@ public:
      */
     finite_element(const Eigen::Matrix<T, dim_, -1>&            nods,
                    const Eigen::Matrix<int, num_per_cell_, -1>& cells);
-    
+
     /**
      * @brief Get the number of dimension
      * 
      * @return size_t 
      */
-    size_t                   Nx() const;
+    size_t Nx() const;
 
     /**
      * @brief The Val function
@@ -63,7 +63,7 @@ public:
      * @param data 
      * @return int 
      */
-    int                      Val(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) const;
+    int Val(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) const;
 
     /**
      * @brief The Gra function
@@ -72,7 +72,7 @@ public:
      * @param data 
      * @return int 
      */
-    int                      Gra(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) const;
+    int Gra(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) const;
 
     /**
      * @brief The Hes function

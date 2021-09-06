@@ -45,7 +45,7 @@ public:
      * @param val 
      * @return int 
      */
-    int    Val(const double* x, double* val) const;
+    int Val(const double* x, double* val) const;
 
     /**
      * @brief Get the jacobian
@@ -55,7 +55,7 @@ public:
      * @param jac 
      * @return int 
      */
-    int    Jac(const double* x, const size_t off, std::vector<TPL>* jac) const;
+    int Jac(const double* x, const size_t off, std::vector<TPL>* jac) const;
 
     /**
      * @brief Get the hessian
@@ -65,7 +65,7 @@ public:
      * @param hes 
      * @return int 
      */
-    int    Hes(const double* x, const size_t off, std::vector<std::vector<TPL>>* hes) const;
+    int Hes(const double* x, const size_t off, std::vector<std::vector<TPL>>* hes) const;
     /**
      * @brief Update the fixed vertexs
      * 
@@ -118,21 +118,21 @@ public:
      * @brief Destroy the constraint_4_coll object
      * 
      */
-    virtual ~constraint_4_coll()                                                                = default;
+    virtual ~constraint_4_coll() = default;
 
     /**
      * @brief Get the number of dimension
      * 
      * @return size_t 
      */
-    virtual size_t Nx() const                                                                   = 0;
+    virtual size_t Nx() const = 0;
 
     /**
      * @brief Get the number of f
      * 
      * @return size_t 
      */
-    virtual size_t Nf() const                                                                   = 0;
+    virtual size_t Nf() const = 0;
 
     /**
      * @brief Get the value
@@ -141,7 +141,7 @@ public:
      * @param val 
      * @return int 
      */
-    virtual int    Val(const T* x, T* val) const                                                = 0;
+    virtual int Val(const T* x, T* val) const = 0;
 
     /**
      * @brief Get the jacobian
@@ -151,7 +151,7 @@ public:
      * @param jac 
      * @return int 
      */
-    virtual int    Jac(const T* x, const size_t off, std::vector<Eigen::Triplet<T>>* jac) const = 0;
+    virtual int Jac(const T* x, const size_t off, std::vector<Eigen::Triplet<T>>* jac) const = 0;
 
     /**
      * @brief Update the object
@@ -159,11 +159,11 @@ public:
      * @param x 
      * @return int 
      */
-    virtual int    update(const T* x)                                                           = 0;
+    virtual int update(const T* x) = 0;
 
     // use this function to do collision detect.
     // Jac and Val just return the last collision detect infomation.
     virtual bool verify_no_collision(const T* x_new) = 0;
 };
 
-}  //!< namespace PhysIKA
+}  // namespace PhysIKA

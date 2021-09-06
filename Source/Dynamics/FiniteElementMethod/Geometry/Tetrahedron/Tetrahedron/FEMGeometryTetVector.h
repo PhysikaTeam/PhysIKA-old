@@ -47,7 +47,7 @@ struct MyVector3
  * @param v 
  * @return double 
  */
-double    length(const MyVector3& v);
+double length(const MyVector3& v);
 
 /**
  * @brief Get the area of the MyVector object
@@ -57,7 +57,7 @@ double    length(const MyVector3& v);
  * @param p_2 
  * @return double 
  */
-double    area(const MyVector3& p_0, const MyVector3& p_1, const MyVector3& p_2);
+double area(const MyVector3& p_0, const MyVector3& p_1, const MyVector3& p_2);
 
 /**
  * @brief Get the volume of the MyVector object
@@ -68,7 +68,7 @@ double    area(const MyVector3& p_0, const MyVector3& p_1, const MyVector3& p_2)
  * @param p_3 
  * @return double 
  */
-double    volume(const MyVector3& p_0, const MyVector3& p_1, const MyVector3& p_2, const MyVector3& p_3);
+double volume(const MyVector3& p_0, const MyVector3& p_1, const MyVector3& p_2, const MyVector3& p_3);
 
 /**
  * @brief Get the point in the tetrahedron object
@@ -78,7 +78,7 @@ double    volume(const MyVector3& p_0, const MyVector3& p_1, const MyVector3& p_
  * @return true 
  * @return false 
  */
-bool      point_in_tet(const MyVector3& p, const MyVector3 (&t)[4]);
+bool point_in_tet(const MyVector3& p, const MyVector3 (&t)[4]);
 
 /**
  * @brief Unitize the MyVector object
@@ -101,5 +101,5 @@ bool      operator==(const MyVector3& v1, const MyVector3& v2);
  * @return true 
  * @return false 
  */
-bool      if_zero(const MyVector3& v1);
+bool if_zero(const MyVector3& v1);
 }  // namespace cxz

@@ -31,7 +31,7 @@ public:
      * @param pt 
      */
     embedded_ms_problem_builder(const T* x, const boost::property_tree::ptree& pt);
-    
+
     /**
      * @brief Construct a new embedded_ms_problem_builder object
      * 

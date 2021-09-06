@@ -114,14 +114,14 @@ public:
     bool       is_triangle_coplanar();
 
 private:
-    int                 set_vert_on_edge(size_t* id_v);
-    int                 sort_edge_vert();
-    bool                v_comp(size_t itr, size_t v1, size_t v2);
-    int                 set_cutted_vert();
-    int                 remove_grid_edge();
-    int                 set_direction();
-    bool                is_cross_vert_front(size_t itr, size_t* axis, size_t* grid);
-    int                 is_vert_on_left(size_t itr, size_t* axis, size_t* grid);
+    int  set_vert_on_edge(size_t* id_v);
+    int  sort_edge_vert();
+    bool v_comp(size_t itr, size_t v1, size_t v2);
+    int  set_cutted_vert();
+    int  remove_grid_edge();
+    int  set_direction();
+    bool is_cross_vert_front(size_t itr, size_t* axis, size_t* grid);
+    int  is_vert_on_left(size_t itr, size_t* axis, size_t* grid);
     /**
      * @brief Get the lower polygon object
      * 
@@ -134,7 +134,7 @@ private:
         size_t               id_prev,
         size_t               id_end,
         std::vector<size_t>& p);
-    
+
     /**
      * @brief Get the sequence start end vert object
      * 
@@ -159,7 +159,7 @@ private:
      * @param axis_projection 
      * @return size_t 
      */
-    size_t              get_front_axis(int is_left, int d1, int d2, size_t axis_projection);
+    size_t get_front_axis(int is_left, int d1, int d2, size_t axis_projection);
 
     /**
      * @brief Determine whether vertexs is parallel.
@@ -170,7 +170,7 @@ private:
      * @return true 
      * @return false 
      */
-    bool                is_parallel_vert_front(int d, size_t grid1, size_t grid2);
+    bool is_parallel_vert_front(int d, size_t grid1, size_t grid2);
 
     /**
      * @brief Get the line section object
@@ -238,21 +238,21 @@ public:
      * @param path 
      * @return int 
      */
-    int                    read_from_file(const char* const path);
+    int read_from_file(const char* const path);
 
     /**
      * @brief Get the tri num object
      * 
      * @return size_t 
      */
-    size_t                 get_tri_num() const;
+    size_t get_tri_num() const;
 
     /**
      * @brief Get the vert num object
      * 
      * @return size_t 
      */
-    size_t                 get_vert_num() const;
+    size_t get_vert_num() const;
 
     /**
      * @brief Set the cut num object
@@ -260,7 +260,7 @@ public:
      * @param num_span 
      * @return int 
      */
-    int                    set_cut_num(size_t num_span);
+    int set_cut_num(size_t num_span);
 
     /**
      * @brief Get the aabb object
@@ -268,7 +268,7 @@ public:
      * @param table_id 
      * @return Eigen::MatrixXd 
      */
-    Eigen::MatrixXd        get_aabb(const std::vector<size_t>& table_id) const;
+    Eigen::MatrixXd get_aabb(const std::vector<size_t>& table_id) const;
 
     /**
      * @brief Get the aabb object
@@ -324,14 +324,14 @@ public:
      * @param path 
      * @return int 
      */
-    int                                write_cell_to_file(const char* const path = "cell.vtk");
+    int write_cell_to_file(const char* const path = "cell.vtk");
 
     /**
      * @brief Set the cut line object
      * 
      * @return int 
      */
-    int                                set_cut_line();
+    int set_cut_line();
 
     /**
      * @brief Get the vert object
@@ -339,7 +339,7 @@ public:
      * @param id_v 
      * @return const Vert& 
      */
-    const Vert&                        get_vert(size_t id_v) const;
+    const Vert& get_vert(size_t id_v) const;
 
     /**
      * @brief Get the vert ptr object
@@ -347,7 +347,7 @@ public:
      * @param id_v 
      * @return const Vert* 
      */
-    const Vert*                        get_vert_ptr(size_t id_v) const;
+    const Vert* get_vert_ptr(size_t id_v) const;
 
     /**
      * @brief Get the vert ptr to add info object
@@ -355,7 +355,7 @@ public:
      * @param id_v 
      * @return Vert* 
      */
-    Vert*                              get_vert_ptr_to_add_info(size_t id_v);
+    Vert* get_vert_ptr_to_add_info(size_t id_v);
 
     /**
      * @brief Get the grid line object
@@ -364,7 +364,7 @@ public:
      * @param id_grid 
      * @return double 
      */
-    double                             get_grid_line(size_t axis, size_t id_grid) const;
+    double get_grid_line(size_t axis, size_t id_grid) const;
 
     /**
      * @brief Get the tri object
@@ -391,7 +391,7 @@ public:
      * @param id_tri 
      * @return const Vector3st& 
      */
-    const Vector3st&       get_tri_vert_id(size_t id_tri) const;
+    const Vector3st& get_tri_vert_id(size_t id_tri) const;
 
     /**
      * @brief Get the grid line object
@@ -408,7 +408,7 @@ public:
      * @param a3 
      * @return Eigen::Vector3d 
      */
-    Eigen::Vector3d        get_grid_vert_coordinate(size_t a1, size_t a2, size_t a3) const;
+    Eigen::Vector3d get_grid_vert_coordinate(size_t a1, size_t a2, size_t a3) const;
 
     /**
      * @brief Cut the mesh
@@ -467,7 +467,7 @@ public:
      * @param e 
      * @return int 
      */
-    int  add_triangle_cutted_edge(size_t id_tri, const Edge& e);
+    int add_triangle_cutted_edge(size_t id_tri, const Edge& e);
 
     /**
      * @brief Add a triangle paralleled to a grid edge 
@@ -477,14 +477,14 @@ public:
      * @param e 
      * @return int 
      */
-    int  add_triangle_parallel_grid_edge(size_t id_tri, size_t itr, const Edge& e);
+    int add_triangle_parallel_grid_edge(size_t id_tri, size_t itr, const Edge& e);
 
     /**
      * @brief Cut surface
      * 
      * @return int 
      */
-    int  cut_surface();
+    int cut_surface();
 
     /**
      * @brief Set the tri coplanar object
@@ -494,7 +494,7 @@ public:
      * @param p 
      * @return int 
      */
-    int  set_tri_coplanar(size_t id, size_t axis, size_t p);
+    int set_tri_coplanar(size_t id, size_t axis, size_t p);
 
     /**
      * @brief Determine whether the normal of the triangle is positive
@@ -596,7 +596,7 @@ private:
      * @param p 
      * @return std::vector<Ring> 
      */
-    std::vector<Ring>   cut_mesh_on_axis_at_p(size_t axis, size_t p);
+    std::vector<Ring> cut_mesh_on_axis_at_p(size_t axis, size_t p);
 
     /**
      * @brief Cut the edge
@@ -605,7 +605,7 @@ private:
      * @param edge 
      * @return int 
      */
-    int                 cut_edge(size_t id_tri, Edge& edge);
+    int cut_edge(size_t id_tri, Edge& edge);
 
     /**
      * @brief Cut the mesh on the axis

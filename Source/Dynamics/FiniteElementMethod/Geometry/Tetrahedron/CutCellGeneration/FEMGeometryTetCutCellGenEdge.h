@@ -97,7 +97,7 @@ public:
      * @param id 
      * @return int 
      */
-    int    set_id(size_t id);
+    int set_id(size_t id);
 
     /**
      * @brief Get the id object
@@ -142,7 +142,7 @@ private:
      * @param is_above 
      * @return size_t 
      */
-    size_t    get_front_axis_from_direction(int is_above);
+    size_t get_front_axis_from_direction(int is_above);
 
     /**
      * @brief Determine whether the edge is parallel to the axis 
@@ -153,7 +153,7 @@ private:
      * @return true 
      * @return false 
      */
-    bool      is_parallel_vert_front(const Vert* ptr_v1, const Vert* ptr_v2, size_t axis);
+    bool is_parallel_vert_front(const Vert* ptr_v1, const Vert* ptr_v2, size_t axis);
 
     /**
      * @brief Get the vert parallel axis object
@@ -162,7 +162,7 @@ private:
      * @param ptr_v2 
      * @return size_t 
      */
-    size_t    get_vert_parallel_axis(const Vert* ptr_v1, const Vert* ptr_v2);
+    size_t get_vert_parallel_axis(const Vert* ptr_v1, const Vert* ptr_v2);
 
     /**
      * @brief Get the grid vert grid id object
@@ -181,7 +181,7 @@ private:
      * @return true 
      * @return false 
      */
-    bool      is_cross_vert_front(Vert* ptr_v1, Vert* ptr_v2);
+    bool is_cross_vert_front(Vert* ptr_v1, Vert* ptr_v2);
 
     /**
      * @brief Set the edge on grid object

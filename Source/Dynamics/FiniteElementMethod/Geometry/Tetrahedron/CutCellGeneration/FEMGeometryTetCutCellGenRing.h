@@ -30,7 +30,7 @@ public:
      * @param p 
      */
     Ring(size_t axis, size_t p);
-    
+
     /**
      * @brief Construct a new Ring object
      * 
@@ -46,7 +46,7 @@ public:
      * @param edge 
      * @return int 
      */
-    int    add_edge(const Edge& edge);
+    int add_edge(const Edge& edge);
 
     /**
      * @brief Add a edge
@@ -54,14 +54,14 @@ public:
      * @param table_e 
      * @return int 
      */
-    int    add_edge(const std::vector<Edge>& table_e);
+    int add_edge(const std::vector<Edge>& table_e);
 
     /**
      * @brief Sort the closed ring
      * 
      * @return int 
      */
-    int    sort_to_closed_ring();
+    int sort_to_closed_ring();
 
     /**
      * @brief Get the edge num object
@@ -76,7 +76,7 @@ public:
      * @param path 
      * @return int 
      */
-    int    write_to_file(const char* const path = "ring.vtk") const;
+    int write_to_file(const char* const path = "ring.vtk") const;
 
     /**
      * @brief Write the edge data to file
@@ -84,14 +84,14 @@ public:
      * @param path 
      * @return int 
      */
-    int    write_edge_to_file(const char* const path = "edge.vtk") const;
+    int write_edge_to_file(const char* const path = "edge.vtk") const;
 
     /**
      * @brief Remove the duplicate edges
      * 
      * @return int 
      */
-    int    remove_duplicate_edge();
+    int remove_duplicate_edge();
 
     /**
      * @brief Add the triangle id
@@ -99,7 +99,7 @@ public:
      * @param id_tri 
      * @return int 
      */
-    int    add_tri_id(size_t id_tri);
+    int add_tri_id(size_t id_tri);
 
     /**
      * @brief Add the coplanar triangle id
@@ -107,7 +107,7 @@ public:
      * @param id_tri 
      * @return int 
      */
-    int    add_coplanar_tri_id(size_t id_tri);
+    int add_coplanar_tri_id(size_t id_tri);
 
     /**
      * @brief Determine whether is coplanar with the triangle
@@ -116,7 +116,7 @@ public:
      * @return true 
      * @return false 
      */
-    bool   is_coplanar_tri(size_t id_tri) const;
+    bool is_coplanar_tri(size_t id_tri) const;
 
     /**
      * @brief Set the loop object
@@ -124,7 +124,7 @@ public:
      * @param need_set_triangle 
      * @return int 
      */
-    int         set_loop(bool need_set_triangle);
+    int set_loop(bool need_set_triangle);
 
     /**
      * @brief Get the next edge object
@@ -148,7 +148,7 @@ public:
      * @param sequence 
      * @return Vector3st 
      */
-    Vector3st   get_sequence_lattice(const std::vector<size_t>& sequence);
+    Vector3st get_sequence_lattice(const std::vector<size_t>& sequence);
 
 public:
     /**
@@ -172,7 +172,7 @@ private:
      * 
      * @return int 
      */
-    int                              set_vertex_sequence();
+    int set_vertex_sequence();
 
     /**
      * @brief Get the axis grid object
@@ -295,7 +295,7 @@ public:
      * @return int 
      */
     int set_grid_line_id();
-    
+
     /**
      * @brief Set the vert on one line object
      * 
@@ -321,14 +321,14 @@ public:
      * 
      * @return int 
      */
-    int                                                       remove_duplicate_vert_on_one_line();
+    int remove_duplicate_vert_on_one_line();
 
     /**
      * @brief Sort the vertexs in the line
      * 
      * @return int 
      */
-    int                                                       sort_line_vert();
+    int sort_line_vert();
 
     /**
      * @brief Write polygon data to file
@@ -336,7 +336,7 @@ public:
      * @param path 
      * @return int 
      */
-    int                                                       write_polygon_to_file(const char* const path = "inner_polygon.vtk") const;
+    int write_polygon_to_file(const char* const path = "inner_polygon.vtk") const;
 
     /**
      * @brief Get the parallel grid edge object
@@ -378,7 +378,7 @@ private:
      * @param e 
      * @return int 
      */
-    int  set_edge_parallel(const Edge& e);
+    int set_edge_parallel(const Edge& e);
 
 private:
     /**
@@ -564,7 +564,7 @@ private:
      * @param poly_new 
      * @return int 
      */
-    int                 resort_boundary(const std::vector<size_t>& poly, size_t id_v, std::vector<size_t>& poly_new);
+    int resort_boundary(const std::vector<size_t>& poly, size_t id_v, std::vector<size_t>& poly_new);
 
     /**
      * @brief Get the polygon object
@@ -616,7 +616,7 @@ private:
      * @return true 
      * @return false 
      */
-    bool             is_vert_front(size_t itr, size_t id_grid, size_t id_v1, const Edge& e1, size_t id_v2, const Edge& e2);
+    bool is_vert_front(size_t itr, size_t id_grid, size_t id_v1, const Edge& e1, size_t id_v2, const Edge& e2);
 
     /**
      * @brief Update p value
@@ -625,7 +625,7 @@ private:
      * @param p 
      * @return int 
      */
-    int              update_p(size_t pos, double* p);
+    int update_p(size_t pos, double* p);
 
     /**
      * @brief Determine whether the vert is front from aabb
@@ -638,12 +638,12 @@ private:
      * @param p 
      * @return int 
      */
-    int              is_vert_front_from_aabb(size_t      itr,
-                                             size_t      id_v1,
-                                             const Edge& e1,
-                                             size_t      id_v2,
-                                             const Edge& e2,
-                                             double*     p);
+    int is_vert_front_from_aabb(size_t      itr,
+                                size_t      id_v1,
+                                const Edge& e1,
+                                size_t      id_v2,
+                                const Edge& e2,
+                                double*     p);
 
     /**
      * @brief Get the vert inside object

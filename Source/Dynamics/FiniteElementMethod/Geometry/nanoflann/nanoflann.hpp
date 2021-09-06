@@ -77,7 +77,7 @@ namespace nanoflann {
 
 /**
  * the PI constant (required to avoid MSVC missing symbols)
- */ 
+ */
 template <typename T>
 T pi_const()
 {
@@ -383,7 +383,6 @@ public:
         return *it;
     }
 };
-
 
 /** 
  * @addtogroup loadsave_grp Load/save auxiliary functions
@@ -910,9 +909,9 @@ class PooledAllocator
     // Minimum number of bytes requested at a time from the system.Must be
     // multiple of WORDSIZE.
 
-    size_t remaining; //!< Number of bytes left in current block of storage.
-    void*  base;      //!< Pointer to base of current block of storage.
-    void*  loc;       //!< Current location in block to next allocate memory.
+    size_t remaining;  //!< Number of bytes left in current block of storage.
+    void*  base;       //!< Pointer to base of current block of storage.
+    void*  loc;        //!< Current location in block to next allocate memory.
 
     /**
      * @brief Internal initialize.
@@ -1130,7 +1129,7 @@ public:
     int dim;                       //!< Dimensionality of each data point
 
     // Define "BoundingBox" as a fixed-size or variable-size container depending
-    // on "DIM" 
+    // on "DIM"
     typedef
         typename array_or_vector_selector<DIM, Interval>::container_t BoundingBox;
 
@@ -1151,7 +1150,7 @@ public:
      * number small of memory allocations.
      */
     PooledAllocator pool;
- 
+
     /**
      * @brief Returns number of points in dataset
      * 
@@ -1238,7 +1237,7 @@ public:
         // If too few exemplars remain, then make this a leaf node.
         if ((right - left) <= static_cast<IndexType>(obj.m_leaf_max_size))
         {
-            node->child1 = node->child2 = NULL; //!< Mark as leaf node.
+            node->child1 = node->child2 = NULL;  //!< Mark as leaf node.
             node->node_type.lr.left     = left;
             node->node_type.lr.right    = right;
 
@@ -1836,7 +1835,7 @@ public:
         // If this is a leaf node, then do check and return.
         if ((node->child1 == NULL) && (node->child2 == NULL))
         {
-            // count_leaf += (node->lr.right-node->lr.left);  
+            // count_leaf += (node->lr.right-node->lr.left);
             // Removed since was
             // neither used nor returned to the user.
             DistanceType worst_dist = result_set.worstDist();
@@ -2263,7 +2262,7 @@ public:
         // If this is a leaf node, then do check and return.
         if ((node->child1 == NULL) && (node->child2 == NULL))
         {
-            // count_leaf += (node->lr.right-node->lr.left);  
+            // count_leaf += (node->lr.right-node->lr.left);
             // Removed since was
             // neither used nor returned to the user.
             DistanceType worst_dist = result_set.worstDist();

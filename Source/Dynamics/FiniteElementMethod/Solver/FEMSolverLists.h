@@ -11,6 +11,16 @@
 
 namespace PhysIKA {
 
+/**
+ * @brief newton method with pcg linear solver.
+ * 
+ * @tparam T 
+ * @tparam dim 
+ * @param pb 
+ * @param pt 
+ * @param dat_str 
+ * @return std::shared_ptr<newton_base<T, dim>> 
+ */
 template <typename T, size_t dim>
 std::shared_ptr<newton_base<T, dim>> newton_with_pcg(
     const std::shared_ptr<Problem<T, dim>>& pb,
@@ -24,6 +34,20 @@ std::shared_ptr<newton_base<T, dim>> newton_with_pcg(
     return std::make_shared<newton_base<T, dim>>(pb, pt.get<size_t>("newton_MaxIter", 20), pt.get<T>("newton_tol", 1e-4), pt.get<bool>("line_search", false), pt.get<bool>("hes_is_const", false), LS, dat_str);
 }
 
+/**
+ * @brief newton solver with fast mass spring and embedded method.
+ * 
+ * @tparam T 
+ * @tparam dim 
+ * @param pb 
+ * @param pt 
+ * @param dat_str 
+ * @param dof_of_nods 
+ * @param embedded_interp 
+ * @param semi 
+ * @param solver_info 
+ * @return std::shared_ptr<newton_base<T, dim>> 
+ */
 template <typename T, size_t dim>
 std::shared_ptr<newton_base<T, dim>> newton_with_fast_ms_and_embedded(
     const std::shared_ptr<Problem<T, dim>>&  pb,
@@ -41,6 +65,19 @@ std::shared_ptr<newton_base<T, dim>> newton_with_fast_ms_and_embedded(
     return std::make_shared<fast_ms_solver<T, dim>>(pb, pt.get<size_t>("newton_MaxIter", 20), pt.get<T>("newton_tol", 1e-4), pt.get<bool>("line_search", false), pt.get<bool>("hes_is_const", false), LS, dat_str, dof_of_nods, embedded_interp, semi, solver_info);
 }
 
+/**
+ * @brief newtom method with pcg method and embedded strategy.
+ * 
+ * @tparam T 
+ * @tparam dim 
+ * @param pb 
+ * @param pt 
+ * @param dat_str 
+ * @param dof_of_nods 
+ * @param embedded_interp 
+ * @param semi 
+ * @return std::shared_ptr<newton_base<T, dim>> 
+ */
 template <typename T, size_t dim>
 std::shared_ptr<newton_base<T, dim>> newton_with_pcg_and_embedded(
     const std::shared_ptr<Problem<T, dim>>&  pb,

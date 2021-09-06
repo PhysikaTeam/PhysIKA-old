@@ -43,6 +43,12 @@ public:
                 std::shared_ptr<dat_str_core<T, dim_>>   dat_str = nullptr,
                 std::shared_ptr<semi_implicit<T>>        semi    = nullptr);
 
+    /**
+     * @brief solve the non linear equation using newton method.
+     * 
+     * @param x_star 
+     * @return int 
+     */
     virtual int solve(T* x_star) const;
 
 protected:
@@ -84,6 +90,13 @@ public:
         std::shared_ptr<embedded_interpolate<T>> embedded_interp,
         std::shared_ptr<semi_implicit<T>>        semi = nullptr)
         : newton_base<T, dim_>(pb, max_iter, tol, line_search, hes_is_constant, linear_solver, dat_str, semi), dof_of_nods_(dof_of_nods), embedded_interp_(embedded_interp) {}
+
+    /**
+     * @brief solve the problem using newton method with embedded strategy.
+     * 
+     * @param x_star 
+     * @return int 
+     */
     virtual int solve(T* x_star) const;
 
     using newton_base<T, dim_>::solve_linear_eq;

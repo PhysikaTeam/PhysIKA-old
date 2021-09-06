@@ -4,7 +4,7 @@
  * @brief The initialize function
  * 
  */
-void   exactinit();
+void exactinit();
 
 /**
  * @brief The exact 2D orientation

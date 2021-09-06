@@ -20,6 +20,6 @@ double clo_surf_vol(const Eigen::MatrixXd& nods, const Eigen::MatrixXi& surf);
  * @param bdbox 
  * @return int 
  */
-int    build_bdbox(const Eigen::MatrixXd& nods, Eigen::MatrixXd& bdbox);
+int build_bdbox(const Eigen::MatrixXd& nods, Eigen::MatrixXd& bdbox);
 
 }  // namespace PhysikaFEM

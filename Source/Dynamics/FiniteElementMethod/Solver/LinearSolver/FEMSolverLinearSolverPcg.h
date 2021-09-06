@@ -27,6 +27,16 @@ public:
     EIGEN_PCG(const bool hes_is_constant, const T tol = 1e-3)
         : hes_is_constant_(hes_is_constant), tol_(tol) {}
 
+    /**
+     * @brief using eigen pcg method to solve some linear system.
+     * 
+     * @param A 
+     * @param b 
+     * @param J 
+     * @param c 
+     * @param solution 
+     * @return int 
+     */
     int solve(const Eigen::SparseMatrix<T, Eigen::RowMajor>& A, const T* b, const Eigen::SparseMatrix<T, Eigen::RowMajor>& J, const T* c, T* solution) const
     {
         using namespace std;

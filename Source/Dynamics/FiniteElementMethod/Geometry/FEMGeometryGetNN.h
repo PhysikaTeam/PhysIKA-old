@@ -66,7 +66,7 @@ public:
      * @param nn_num 
      * @return const Eigen::VectorXi 
      */
-    const Eigen::VectorXi  get_NN(const Eigen::Vector3d& query, const size_t& nn_num);
+    const Eigen::VectorXi get_NN(const Eigen::Vector3d& query, const size_t& nn_num);
 
     /**
      * @brief Get the four noncoplanar NN object
@@ -74,7 +74,7 @@ public:
      * @param nods 
      * @return const Eigen::MatrixXi 
      */
-    const Eigen::MatrixXi  get_four_noncoplanar_NN(const Eigen::MatrixXd& nods);
+    const Eigen::MatrixXi get_four_noncoplanar_NN(const Eigen::MatrixXd& nods);
 
     /**
      * @brief Get the sup radi object
@@ -122,7 +122,7 @@ private:
      * @param NN_cand 
      * @return int 
      */
-    int             find_NN(const size_t& point_id, std::vector<pair_dis>& NN_cand);
+    int find_NN(const size_t& point_id, std::vector<pair_dis>& NN_cand);
     /**
      * @brief Find the NN object
      * 
@@ -131,14 +131,14 @@ private:
      * @param nn_num_ 
      * @return int 
      */
-    int             find_NN(const size_t& point_id, std::vector<pair_dis>& NN_cand, const size_t& nn_num_);
+    int find_NN(const size_t& point_id, std::vector<pair_dis>& NN_cand, const size_t& nn_num_);
 
     /**
      * @brief Initialize hash nnn data 
      * 
      * @return int
      */
-    int             hash_NNN();
+    int hash_NNN();
 
     Eigen::Vector3d cell_size;
 };

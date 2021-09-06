@@ -52,7 +52,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Val(const T* x, data_ptr<T, dim_>& data) const;
+    int Val(const T* x, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the gradients
@@ -61,7 +61,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Gra(const T* x, data_ptr<T, dim_>& data) const;
+    int Gra(const T* x, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the hessian
@@ -70,7 +70,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Hes(const T* x, data_ptr<T, dim_>& data) const;
+    int Hes(const T* x, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the number of dimension
@@ -112,7 +112,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Val(const T* disp, data_ptr<T, dim_>& data) const;
+    int Val(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the gradients
@@ -121,7 +121,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Gra(const T* disp, data_ptr<T, dim_>& data) const;
+    int Gra(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the hesssian
@@ -130,7 +130,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Hes(const T* disp, data_ptr<T, dim_>& data) const;
+    int Hes(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the number of dimension
@@ -166,7 +166,7 @@ public:
      * @param init_points_ptr 
      */
     collision(const size_t dim, const T& w_coll, const char& ground_axis, const T& ground_pos, const size_t& num_surf_point, const std::shared_ptr<Eigen::Matrix<T, -1, -1>>& init_points_ptr);
-    
+
     /**
      * @brief Get the value
      * 
@@ -174,7 +174,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Val(const T* disp, data_ptr<T, dim_>& data) const;
+    int Val(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the gradients
@@ -183,7 +183,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Gra(const T* disp, data_ptr<T, dim_>& data) const;
+    int Gra(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the hessian
@@ -192,7 +192,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Hes(const T* disp, data_ptr<T, dim_>& data) const;
+    int Hes(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the Number of dimension
@@ -246,7 +246,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Val(const T* disp, data_ptr<T, dim_>& data) const;
+    int Val(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the gradients
@@ -255,7 +255,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Gra(const T* disp, data_ptr<T, dim_>& data) const;
+    int Gra(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Get the hession
@@ -264,7 +264,7 @@ public:
      * @param data 
      * @return int 
      */
-    int    Hes(const T* disp, data_ptr<T, dim_>& data) const;
+    int Hes(const T* disp, data_ptr<T, dim_>& data) const;
 
     /**
      * @brief Update the location and velocity of the object
@@ -273,7 +273,7 @@ public:
      * @param new_velo_ptr 
      * @return int 
      */
-    int    update_location_and_velocity(const T* new_dispk_ptr, const T* new_velo_ptr);
+    int update_location_and_velocity(const T* new_dispk_ptr, const T* new_velo_ptr);
 
     /**
      * @brief Set the initial velocity of the object
@@ -281,7 +281,7 @@ public:
      * @param velo 
      * @return int 
      */
-    int    set_initial_velocity(const Eigen::Matrix<T, dim_, 1>& velo);
+    int set_initial_velocity(const Eigen::Matrix<T, dim_, 1>& velo);
 
     /**
      * @brief Update the object
@@ -289,7 +289,7 @@ public:
      * @param x 
      * @return int 
      */
-    int    update(const T* x);
+    int update(const T* x);
 
     /**
      * @brief Get the number of dimension

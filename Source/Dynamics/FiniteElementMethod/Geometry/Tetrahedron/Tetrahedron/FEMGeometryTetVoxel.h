@@ -117,7 +117,7 @@ private:
      * @param vtk 
      * @return int 
      */
-    int  init_parameter(const SimpleVtk& vtk);
+    int init_parameter(const SimpleVtk& vtk);
 
     /**
      * @brief Initialize the voxel data
@@ -166,7 +166,7 @@ private:
      * @return true 
      * @return false 
      */
-    bool   judge_nearby(const SimpleVoxel& voxel_1, const SimpleVoxel& voxel_2, const SimpleVtk& vtk);
+    bool judge_nearby(const SimpleVoxel& voxel_1, const SimpleVoxel& voxel_2, const SimpleVtk& vtk);
 
     /**
      * @brief Judge the nearby cell
@@ -177,7 +177,7 @@ private:
      * @return true 
      * @return false 
      */
-    bool   judge_nearby_cell(const SimpleVoxel& voxel_1, const SimpleVoxel& voxel_2, const SimpleVtk& vtk);
+    bool judge_nearby_cell(const SimpleVoxel& voxel_1, const SimpleVoxel& voxel_2, const SimpleVtk& vtk);
 
     /**
      * @brief Judge whether it is the same face
@@ -187,7 +187,7 @@ private:
      * @return true 
      * @return false 
      */
-    bool   judge_same_face(const SimpleFace& face_1, const SimpleFace& face_2);
+    bool judge_same_face(const SimpleFace& face_1, const SimpleFace& face_2);
 
     /**
      * @brief Judge whether it is the corresponding vertex index
@@ -199,7 +199,7 @@ private:
      * @return true 
      * @return false 
      */
-    bool   judge_corresponding_vertex_index(const size_t& voxel_1, const size_t& voxel_2, std::vector<size_t>& index1, std::vector<size_t>& index2);
+    bool judge_corresponding_vertex_index(const size_t& voxel_1, const size_t& voxel_2, std::vector<size_t>& index1, std::vector<size_t>& index2);
 
     /**
      * @brief Get the coordinates by index
@@ -207,7 +207,7 @@ private:
      * @param coord 
      * @param index 
      */
-    void           coord_to_index(const cxz::MyVector3& coord, size_t (&index)[3]);
+    void coord_to_index(const cxz::MyVector3& coord, size_t (&index)[3]);
 
     /**
      * @brief Get the coordinates by index
@@ -231,26 +231,26 @@ private:
      * @brief Insert the bcc center
      * 
      */
-    void   insert_bcc_center();
+    void insert_bcc_center();
 
     /**
      * @brief Initialize the bcc segment
      * 
      */
-    void   init_bcc_segment();
+    void init_bcc_segment();
 
     /**
      * @brief Initialize the bcc tetrahedron
      * 
      */
-    void   init_bcc_tet();
+    void init_bcc_tet();
 
     /**
      * @brief Initialize the true bcc tetrahedron
      * 
      * @param vtk 
      */
-    void   init_true_bcc_tet(const SimpleVtk& vtk);
+    void init_true_bcc_tet(const SimpleVtk& vtk);
 
     /**
      * @brief Judge whether the cells intersect
@@ -261,5 +261,5 @@ private:
      * @return true 
      * @return false 
      */
-    bool   judge_tet_cell_intersect(const size_t& tet_index, const size_t& cell_index, const SimpleVtk& vtk);
+    bool judge_tet_cell_intersect(const size_t& tet_index, const size_t& cell_index, const SimpleVtk& vtk);
 };
