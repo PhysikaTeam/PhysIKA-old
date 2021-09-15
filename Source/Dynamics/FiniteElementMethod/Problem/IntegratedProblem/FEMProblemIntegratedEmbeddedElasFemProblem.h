@@ -134,8 +134,10 @@ public:
      * 
      * @return Eigen::Matrix<T, -1, 1> 
      */
-    Eigen::Matrix<T, -1, 1> get_mass_vec() const {
-        if (kinetic_ == nullptr) {
+    Eigen::Matrix<T, -1, 1> get_mass_vec() const
+    {
+        if (kinetic_ == nullptr)
+        {
             std::cerr << "[Error] kinetic is not prepared!" << std::endl;
             exit(1);
         }

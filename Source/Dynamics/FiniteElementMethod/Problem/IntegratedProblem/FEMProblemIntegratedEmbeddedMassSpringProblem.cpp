@@ -103,7 +103,7 @@ embedded_ms_problem_builder<T>::embedded_ms_problem_builder(const T* x, const bo
     }
 
     REST_           = nods;
-    REST_COARSE_ = nods_coarse;
+    REST_COARSE_    = nods_coarse;
     cells_          = cells;
     fine_verts_num_ = REST_.cols();
 

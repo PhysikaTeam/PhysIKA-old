@@ -98,8 +98,10 @@ public:
      * 
      * @return Eigen::Matrix<T, -1, 1> 
      */
-    Eigen::Matrix<T, -1, 1> get_mass_vec() const {
-        if (kinetic_ == nullptr) {
+    Eigen::Matrix<T, -1, 1> get_mass_vec() const
+    {
+        if (kinetic_ == nullptr)
+        {
             std::cerr << "[Error] kinetic is not prepared!" << std::endl;
             exit(1);
         }
@@ -118,7 +120,6 @@ public:
 protected:
     Eigen::Matrix<T, -1, -1> REST_, REST_COARSE_;
     Eigen::MatrixXi          cells_;
-
 
     std::shared_ptr<constraint_4_coll<T>>          collider_;
     std::shared_ptr<momentum<T, 3>>                kinetic_;

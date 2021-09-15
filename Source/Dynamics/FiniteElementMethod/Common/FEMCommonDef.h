@@ -414,7 +414,7 @@ int compute_hes_pattern(const std::shared_ptr<Functional<T, field>>& energy,
     const size_t total_dim = energy->Nx();
     dat_str->set_zero();
     Eigen::Matrix<T, -1, 1> random_x(total_dim);
-	random_x.setRandom();
+    random_x.setRandom();
     {
 
         dat_str->set_zero();

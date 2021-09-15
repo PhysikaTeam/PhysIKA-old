@@ -52,21 +52,23 @@
 using namespace std;
 using namespace PhysIKA;
 
-template<typename DynamicsT>
-void init_problem_and_solver(const std::shared_ptr<DynamicsT> &model, const boost::property_tree::ptree &pt) {
+template <typename DynamicsT>
+void init_problem_and_solver(const std::shared_ptr<DynamicsT>& model, const boost::property_tree::ptree& pt)
+{
     model->init_problem_and_solver(pt);
 }
 
-template<>
-void init_problem_and_solver(const std::shared_ptr<ParticleElasticBody<DataType3f>> &model, const boost::property_tree::ptree &pt) {
+template <>
+void init_problem_and_solver(const std::shared_ptr<ParticleElasticBody<DataType3f>>& model, const boost::property_tree::ptree& pt)
+{
 }
 
-template<typename DynamicsT>
-std::shared_ptr<DynamicsT> AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, const Vector3f &color, const Vector3f &pos, const boost::property_tree::ptree &pt)
+template <typename DynamicsT>
+std::shared_ptr<DynamicsT> AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, const Vector3f& color, const Vector3f& pos, const boost::property_tree::ptree& pt)
 {
     auto model = std::make_shared<DynamicsT>();
     root->addParticleSystem(model);
-    
+
     auto sRender = std::make_shared<SurfaceMeshRender>();
     sRender->setColor(color);
     model->getSurfaceNode()->addVisualModule(sRender);
@@ -78,14 +80,14 @@ std::shared_ptr<DynamicsT> AddSimulationModel(std::shared_ptr<StaticBoundary<Dat
     model->setVisible(true);
     model->getElasticitySolver()->setIterationNumber(10);
     model->getElasticitySolver()->inHorizon()->setValue(0.03);
-    model->getTopologyMapping()->setSearchingRadius(0.05);  
+    model->getTopologyMapping()->setSearchingRadius(0.05);
     sfi->addParticleSystem(model);
-    init_problem_and_solver<DynamicsT>(model, pt); 
-    return model; 
+    init_problem_and_solver<DynamicsT>(model, pt);
+    return model;
 }
 
-template<typename DynamicsT>
-std::shared_ptr<DynamicsT> AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, const Vector3f &color, const Vector3f &pos, const std::string &jsonfile)
+template <typename DynamicsT>
+std::shared_ptr<DynamicsT> AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, const Vector3f& color, const Vector3f& pos, const std::string& jsonfile)
 {
     boost::property_tree::ptree pt;
     read_json(jsonfile, pt);
@@ -110,18 +112,17 @@ void CreateScene()
 
     auto EFEM = AddSimulationModel<EmbeddedFiniteElement<DataType3f>>(root, sfi, Vector3f(1, 0, 0), Vector3f(0.2 + 0.42 * 2, 0.6, 0.8), "../../Media/zju/consistent/origin.json");
 
-	boost::property_tree::ptree pt;
+    boost::property_tree::ptree pt;
     read_json("../../Media/zju/consistent/origin.json", pt);
-	auto ratio = k_consistent<Real>(EMS->epb_fac_->get_K(), EMS->epb_fac_->get_mass_vec(), EFEM->epb_fac_->get_K(), EFEM->epb_fac_->get_mass_vec(), 6, pt.get<int>("consistent_num", 6));
+    auto ratio = k_consistent<Real>(EMS->epb_fac_->get_K(), EMS->epb_fac_->get_mass_vec(), EFEM->epb_fac_->get_K(), EFEM->epb_fac_->get_mass_vec(), 6, pt.get<int>("consistent_num", 6));
     std::cout << "ratio: " << ratio << std::endl;
-
 
     auto young = pt.get_child("physics").get<double>("Young");
     std::cout << "young: " << young << std::endl;
     pt.get_child("physics").put("Young", young * ratio);
     young = pt.get_child("physics").get<double>("Young");
-    std::cout << "young: " << young << std::endl;  
-    //exit(1);  
+    std::cout << "young: " << young << std::endl;
+    //exit(1);
     auto FEFEM = AddSimulationModel<EmbeddedFiniteElement<DataType3f>>(root, sfi, Vector3f(1, 0, 1), Vector3f(0.2 + 0.42 * 1, 0.6, 0.8), pt);
 }
 

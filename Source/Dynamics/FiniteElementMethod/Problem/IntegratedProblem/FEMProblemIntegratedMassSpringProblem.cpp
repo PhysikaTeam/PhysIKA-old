@@ -65,8 +65,8 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
     if (x != nullptr)
         nods = Map<const MAT<T>>(x, nods.rows(), nods.cols());
 
-    REST_COARSE_ = REST_  = nods;
-    cells_ = cells;
+    REST_COARSE_ = REST_ = nods;
+    cells_               = cells;
 
     //read fixed points
     vector<size_t> cons(0);
@@ -117,27 +117,30 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
     }
 }
 
-    /**
+/**
      * @brief get stiffness matrix.
      * 
      * @return Eigen::SparseMatrix<T, Eigen::RowMajor> 
      */
-    template <typename T>
-    Eigen::SparseMatrix<T, Eigen::RowMajor> ms_problem_builder<T>::get_K() const {
-        if (ebf_.size() == 0) {
-            std::cerr << "[Error] ebf is not prepared!" << std::endl;
-            exit(1);
-        }
-        std::cout << "RestBlock: \n" << REST_COARSE_.block<3, 3>(0, 0) << std::endl;
-        std::cout << "Rest.size(): " << REST_COARSE_.size() / 3 << std::endl;
-        data_ptr<T, 3> data = std::make_shared<dat_str_core<T, 3>>(REST_COARSE_.size() / 3, false); 
-        data->set_zero();
-        ebf_[0]->Hes(REST_COARSE_.data(), data);
-        data->setFromTriplets();
-        data->hes_compress();
-        std::cout << "in Embed MS: " << data->get_hes().nonZeros() << std::endl;
-        return data->get_hes();
+template <typename T>
+Eigen::SparseMatrix<T, Eigen::RowMajor> ms_problem_builder<T>::get_K() const
+{
+    if (ebf_.size() == 0)
+    {
+        std::cerr << "[Error] ebf is not prepared!" << std::endl;
+        exit(1);
     }
+    std::cout << "RestBlock: \n"
+              << REST_COARSE_.block<3, 3>(0, 0) << std::endl;
+    std::cout << "Rest.size(): " << REST_COARSE_.size() / 3 << std::endl;
+    data_ptr<T, 3> data = std::make_shared<dat_str_core<T, 3>>(REST_COARSE_.size() / 3, false);
+    data->set_zero();
+    ebf_[0]->Hes(REST_COARSE_.data(), data);
+    data->setFromTriplets();
+    data->hes_compress();
+    std::cout << "in Embed MS: " << data->get_hes().nonZeros() << std::endl;
+    return data->get_hes();
+}
 
 template <typename T>
 std::shared_ptr<Problem<T, 3>> ms_problem_builder<T>::build_problem() const

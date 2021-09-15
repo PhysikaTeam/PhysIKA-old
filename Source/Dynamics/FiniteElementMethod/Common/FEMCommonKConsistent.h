@@ -13,7 +13,7 @@
 #include <Eigen/Sparse>
 
 namespace PhysIKA {
-  /**
+/**
    * @brief calculate the material consistent coefficients
    * 
    * Eigen::SparseMatrix<double, Eigen::RowMajor> K =
@@ -35,8 +35,10 @@ namespace PhysIKA {
    * @return Real the coefficients about two objects.
    */
 template <typename Real, int Options = Eigen::RowMajor>
-Real k_consistent(const Eigen::SparseMatrix<Real, Options> &Kref,
-                  const Eigen::Matrix<Real, -1, 1> &Mref,
-                  const Eigen::SparseMatrix<Real, Options> &Kdest,
-                  const Eigen::Matrix<Real, -1, 1> &Mdest, int start = 6, int num = 6);
-}
+Real k_consistent(const Eigen::SparseMatrix<Real, Options>& Kref,
+                  const Eigen::Matrix<Real, -1, 1>&         Mref,
+                  const Eigen::SparseMatrix<Real, Options>& Kdest,
+                  const Eigen::Matrix<Real, -1, 1>&         Mdest,
+                  int                                       start = 6,
+                  int                                       num   = 6);
+}  // namespace PhysIKA

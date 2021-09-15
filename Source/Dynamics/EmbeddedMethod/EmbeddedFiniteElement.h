@@ -57,9 +57,9 @@ public:
     std::shared_ptr<embedded_elas_problem_builder<Real>> epb_fac_;
 
 protected:
-    std::shared_ptr<Node>                                m_surfaceNode;
-    std::string                                          output;
-    int                                                  frame_id{ -1 };
+    std::shared_ptr<Node> m_surfaceNode;
+    std::string           output;
+    int                   frame_id{ -1 };
 };
 
 #ifdef PRECISION_FLOAT
