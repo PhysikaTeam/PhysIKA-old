@@ -54,10 +54,10 @@ public:
 public:
     /*VarField<Real> m_horizon;*/
     DEF_EMPTY_VAR(Horizon, Real, "Horizon");
+    std::shared_ptr<embedded_elas_problem_builder<Real>> epb_fac_;
 
 protected:
     std::shared_ptr<Node>                                m_surfaceNode;
-    std::shared_ptr<embedded_elas_problem_builder<Real>> epb_fac;
     std::string                                          output;
     int                                                  frame_id{ -1 };
 };

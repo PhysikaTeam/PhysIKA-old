@@ -218,10 +218,10 @@ void EmbeddedFiniteElement<TDataType>::init_problem_and_solver(const boost::prop
         for (size_t j = 0; j < 3; ++j)
             nods[j + 3 * i] = pts[i][j];
 
-    epb_fac = std::make_shared<embedded_elas_problem_builder<Real>>(&nods[0], pt);
+    epb_fac_ = std::make_shared<embedded_elas_problem_builder<Real>>(&nods[0], pt);
 
     auto integrator = this->template getModule<EmbeddedIntegrator<TDataType>>("integrator");
-    integrator->bind_problem(epb_fac, pt);
+    integrator->bind_problem(epb_fac_, pt);
 
     auto get_file_name = [](const std::string& file) -> std::string {
         size_t pos = file.find_last_of('/') + 1;

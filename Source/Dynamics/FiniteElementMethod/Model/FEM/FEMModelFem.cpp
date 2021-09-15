@@ -120,7 +120,7 @@ int FEM_CLASS::Hes(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) c
     for (size_t cell_id = 0; cell_id < num_cells_; ++cell_id)
     {
         Matrix<T, field_, dim_>                                   def_gra;
-        const Matrix<T, field_, num_per_cell_>                    x_cell      = indexing(deformed, field_all_rows_, cells_.col(cell_id));
+        const Matrix<T, field_, num_per_cell_>                    x_cell      = deformed(all, cells_.col(cell_id));
         Matrix<T, field_ * num_per_cell_, 1>                      gra_x_based = Matrix<T, field_ * num_per_cell_, 1>::Zero();
         Matrix<T, field_ * dim_, field_ * dim_>                   hes_F_based;
         Matrix<T, field_ * num_per_cell_, field_ * num_per_cell_> hes_x_based;
@@ -129,6 +129,7 @@ int FEM_CLASS::Hes(const T* x, std::shared_ptr<dat_str_core<T, field_>>& data) c
         //TODO:considering the order of basis
         for (size_t qdrt_id = 0; qdrt_id < num_qdrt_; ++qdrt_id)
         {
+			
             basis::get_def_gra(Dphi_Dxi_[cell_id][qdrt_id], x_cell.data(), Dm_inv_[cell_id][qdrt_id], def_gra);
             hes_F_based = csttt::hes(def_gra, mtr_.col(cell_id));
             hes_x_based.noalias() += Ddef_Dx_[cell_id][qdrt_id].transpose() * hes_F_based * Ddef_Dx_[cell_id][qdrt_id] * quadrature_.WGT_[qdrt_id] * Jac_det_[cell_id][qdrt_id];

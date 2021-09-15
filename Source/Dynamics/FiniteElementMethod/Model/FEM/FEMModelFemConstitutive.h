@@ -15,6 +15,8 @@
 
 #include "Common/FEMCommonPolarDecomposition.h"
 #include "Common/FEMCommonTensor.h"
+#include "Model/FEM/FEMCoro.hpp"
+
 
 namespace PhysIKA {
 /**
@@ -336,6 +338,12 @@ public:
         const Eigen::Matrix<T, -1, 1>&        mtr)
     {
         const T                                          lam = mtr(0), mu = mtr(1);
+
+        Eigen::Matrix<T, dim_, dim_> R;
+        {
+            int res = polar_decomposition<T, Eigen::Matrix<T, dim_, dim_>, 3>(F, R);
+            // error_msg_cond(res != 0, "polar_decomposition failed.");
+        }
         Eigen::JacobiSVD<Eigen::Matrix<T, field_, dim_>> svd(
             F, Eigen::ComputeThinU | Eigen::ComputeThinV);
         // res is Sigma - I, where Sigma is the singularValues of F.
@@ -358,14 +366,20 @@ public:
             int res = polar_decomposition<T, Eigen::Matrix<T, dim_, dim_>, 3>(F, R);
             // error_msg_cond(res != 0, "polar_decomposition failed.");
         }
+        Eigen::Matrix<T, dim_ * dim_, 1> gra;
+        gra.setZero();
+        corotated_elas3d_jac(gra.data(),F.data(), R.data(),&lam, &mu);
+        return gra;
         Eigen::JacobiSVD<Eigen::Matrix<T, field_, dim_>> svd(
             F, Eigen::ComputeThinU | Eigen::ComputeThinV);
         // res is Sigma - I, where Sigma is the singularValues of F.
         // Sigma is a diagonal matrix.
         const auto& res = svd.singularValues();
+	
+        
         // 2*mu*(F-R) + lambda * tr(Sigma - I) * R
         Eigen::Matrix<T, dim_, dim_> gra_mat =
-            2 * mu * (F - R) + lam * (res.sum() - 3) * R;
+            mu * (F + R * F.transpose()*R - 2 * R) + lam * (res.sum() - 3) * R;
         Eigen::Map<Eigen::Matrix<T, dim_ * dim_, 1>> gra_vec(gra_mat.data());
         return std::move(gra_vec);
     }
@@ -377,20 +391,28 @@ public:
         const T lam = mtr(0), mu = mtr(1);
         // 2*mu*Iden + lambda * d(tr(R^TF)*R)
         Eigen::Matrix<T, dim_ * dim_, dim_ * dim_> hes;
-        // part 1. 2*mu*Iden
-        hes.setIdentity();
-        hes *= 2 * mu;
-        // part 2. lambda * d(tr(R^TF)*R)
-        Eigen::Matrix<T, dim_, dim_> R;
+		Eigen::Matrix<T, dim_, dim_> R;
         {
-            int res = polar_decomposition<T, Eigen::Matrix<T, dim_, dim_>, 3>(F, R);
-            // error_msg_cond(res != 0, "polar_decomposition failed.");
+            Eigen::JacobiSVD<Eigen::Matrix<T, field_, dim_>> svd(
+                F, Eigen::ComputeThinU | Eigen::ComputeThinV);
+            R = svd.matrixU() * svd.matrixV().transpose();
         }
-        // convert the R matrix to a vector. (column major)
-        Eigen::Map<const Eigen::Matrix<T, dim_ * dim_, 1>> R_vec(
-            R.data(), dim_ * dim_, 1);
-        hes += lam * R_vec * R_vec.transpose();
-        return std::move(hes);
+        corotated_elas3d_hes(hes.data(),F.data(), R.data(),&lam, &mu);
+        return hes;
+        // part 1. 2*mu*Iden
+        //hes.setIdentity();
+        //hes *= 2 * mu;
+        //// part 2. lambda * d(tr(R^TF)*R)
+        //Eigen::Matrix<T, dim_, dim_> R;
+        //{
+        //    int res = polar_decomposition<T, Eigen::Matrix<T, dim_, dim_>, 3>(F, R);
+        //    // error_msg_cond(res != 0, "polar_decomposition failed.");
+        //}
+        //// convert the R matrix to a vector. (column major)
+        //Eigen::Map<const Eigen::Matrix<T, dim_ * dim_, 1>> R_vec(
+        //    R.data(), dim_ * dim_, 1);
+        //hes += lam * R_vec * R_vec.transpose();
+        //return std::move(hes);
     }
 };
 

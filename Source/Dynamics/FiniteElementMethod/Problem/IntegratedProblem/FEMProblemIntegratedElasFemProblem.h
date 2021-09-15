@@ -83,11 +83,11 @@ public:
     /**
      * @brief Get the elas energy object
      * 
-     * @return std::shared_ptr<elas_intf<T, 3>> 
+     * @return std::shared_ptr<Functional<T, 3>> 
      */
-    std::shared_ptr<elas_intf<T, 3>> get_elas_energy() const
+    std::shared_ptr<Functional<T, 3>> get_elas_energy() const
     {
-        return elas_intf_;
+        return ebf_[0];
     }
 
 private:

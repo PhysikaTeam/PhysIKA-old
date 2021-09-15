@@ -48,8 +48,7 @@ public:
 
     virtual void init_problem_and_solver(const boost::property_tree::ptree& pt);
 
-private:
-    std::shared_ptr<embedded_problem_builder<Real, 3>> epb_fac_;
+    std::shared_ptr<ms_problem_builder<Real>> epb_fac_;
 };
 
 #ifdef PRECISION_FLOAT

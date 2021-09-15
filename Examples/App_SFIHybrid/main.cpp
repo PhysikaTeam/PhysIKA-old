@@ -95,8 +95,8 @@ void CreateScene()
         std::shared_ptr<EmbeddedFiniteElement<DataType3f>> bunny = std::make_shared<EmbeddedFiniteElement<DataType3f>>();
         root->addParticleSystem(bunny);
         bunny->setMass(1.0);
-        bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
-        bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
+        bunny->loadParticles("../../Media/zju/bunny/sparse_bunny_points.obj");
+        bunny->loadSurface("../../Media/zju/bunny/sparse_bunny_mesh.obj");
 
         bunny->translate(Vector3f(0.75, 0.2, 0.4));
         bunny->setVisible(false);
@@ -109,7 +109,7 @@ void CreateScene()
         sRender->setColor(Vector3f(1, 1, 0));
 
         boost::property_tree::ptree pt;
-        const std::string           jsonfile_path = "../../Media/bunny/embedded_finite_element_sparse.json";
+        const std::string           jsonfile_path = "../../Media/zju/bunny/embedded_finite_element_sparse.json";
         read_json(jsonfile_path, pt);
         bunny->init_problem_and_solver(pt);
         pt.put("fast_FEM", false);
@@ -119,8 +119,8 @@ void CreateScene()
         std::shared_ptr<EmbeddedMassSpring<DataType3f>> bunny = std::make_shared<EmbeddedMassSpring<DataType3f>>();
         root->addParticleSystem(bunny);
         bunny->setMass(1.0);
-        bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
-        bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
+        bunny->loadParticles("../../Media/zju/bunny/sparse_bunny_points.obj");
+        bunny->loadSurface("../../Media/zju/bunny/sparse_bunny_mesh.obj");
         bunny->translate(Vector3f(0.75, 0.2, 0.4 + 0.3));
         bunny->setVisible(false);
         bunny->getElasticitySolver()->setIterationNumber(10);
@@ -132,7 +132,7 @@ void CreateScene()
         sRender->setColor(Vector3f(1, 0, 1));
 
         boost::property_tree::ptree pt;
-        const std::string           jsonfile_path = "../../Media/bunny/collision_hybrid.json";
+        const std::string           jsonfile_path = "../../Media/zju/bunny/collision_hybrid.json";
         read_json(jsonfile_path, pt);
         bunny->init_problem_and_solver(pt);
         pt.put("fast_FEM", false);
@@ -143,9 +143,9 @@ void CreateScene()
         std::shared_ptr<ParticleElasticBody<DataType3f>> bunny = std::make_shared<ParticleElasticBody<DataType3f>>();
         root->addParticleSystem(bunny);
         bunny->setMass(1.0);
-        bunny->loadParticles("../../Media/bunny/sparse_bunny_points.obj");
+        bunny->loadParticles("../../Media/zju/bunny/sparse_bunny_points.obj");
 
-        bunny->loadSurface("../../Media/bunny/sparse_bunny_mesh.obj");
+        bunny->loadSurface("../../Media/zju/bunny/sparse_bunny_mesh.obj");
         bunny->translate(Vector3f(0.75, 0.2, 0.4 + 2 * 0.3));
         bunny->setVisible(false);
         bunny->getElasticitySolver()->setIterationNumber(10);

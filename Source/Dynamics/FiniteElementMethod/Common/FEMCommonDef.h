@@ -414,12 +414,9 @@ int compute_hes_pattern(const std::shared_ptr<Functional<T, field>>& energy,
     const size_t total_dim = energy->Nx();
     dat_str->set_zero();
     Eigen::Matrix<T, -1, 1> random_x(total_dim);
+	random_x.setRandom();
     {
-#pragma omp parallel for
-        for (size_t i = 0; i < total_dim; ++i)
-        {
-            random_x(i) = i * 4.5 + i * i;
-        }
+
         dat_str->set_zero();
         __TIME_BEGIN__;
         IF_ERR(return, energy->Hes(random_x.data(), dat_str));

@@ -34,6 +34,25 @@ using MAT = Eigen::Matrix<T, -1, -1>;
 template <typename T>
 using VEC = Eigen::Matrix<T, -1, 1>;
 
+    /**
+     * @brief get stiffness matrix.
+     * 
+     * @return Eigen::SparseMatrix<T, Eigen::RowMajor> 
+     */
+    template <typename T>
+    Eigen::SparseMatrix<T, Eigen::RowMajor> embedded_elas_problem_builder<T>::get_K() const {
+        if (ebf_.size() == 0) {
+            std::cerr << "[Error] ebf is not prepared!" << std::endl;
+            exit(1);
+        }
+        data_ptr<T, 3> data = std::make_shared<dat_str_core<T, 3>>(REST_COARSE_.size() / 3, false); 
+        ebf_[0]->Hes(REST_COARSE_.data(), data);
+        data->setFromTriplets();
+        data->hes_compress();
+        std::cout << "in Embed elas FEM: " << data->get_hes().nonZeros() << std::endl;
+        return data->get_hes();
+    }
+
 template <typename T>
 embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, const boost::property_tree::ptree& pt)
     : pt_(pt)
@@ -183,6 +202,7 @@ embedded_elas_problem_builder<T>::embedded_elas_problem_builder(const T* x, cons
          << nods_coarse.rowwise().maxCoeff() << endl;
 
     REST_  = nods;
+    REST_COARSE_ = nods_coarse;
     cells_ = cells;
     /*Matrix<T, -1, -1> nods_temp = nods_coarse;*/
     fine_verts_num_ = REST_.cols();

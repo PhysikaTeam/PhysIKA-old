@@ -93,11 +93,32 @@ public:
         return semi_implicit_;
     }
 
+    /**
+     * @brief Get the mass vec object
+     * 
+     * @return Eigen::Matrix<T, -1, 1> 
+     */
+    Eigen::Matrix<T, -1, 1> get_mass_vec() const {
+        if (kinetic_ == nullptr) {
+            std::cerr << "[Error] kinetic is not prepared!" << std::endl;
+            exit(1);
+        }
+        return kinetic_->get_mass_vec();
+    }
+
+    /**
+     * @brief get stiffness matrix.
+     * 
+     * @return Eigen::SparseMatrix<T, Eigen::RowMajor> 
+     */
+    Eigen::SparseMatrix<T, Eigen::RowMajor> get_K() const;
+
     using semi_wrapper<T>::semi_implicit_;
 
 protected:
-    Eigen::Matrix<T, -1, -1> REST_;
+    Eigen::Matrix<T, -1, -1> REST_, REST_COARSE_;
     Eigen::MatrixXi          cells_;
+
 
     std::shared_ptr<constraint_4_coll<T>>          collider_;
     std::shared_ptr<momentum<T, 3>>                kinetic_;

@@ -1,0 +1,22 @@
+{
+  "filename": "../../Media/zju/armadillo/armadillo_points.obj",
+  "filename_coarse" : "../../Media/zju/armadillo/armadillo-tet.vtk",
+  "type": "tet",
+    "solver_type":"implicit",
+  "cons": "../../Media/bunny/sparse_bunny.csv",
+  "tol":1e-4,
+  "hes_is_const":false,
+  "physics":
+  {
+    "gravity": 9.8,
+    "rho": 0.02,
+    "csttt":"corotated",
+    "dt":0.001,
+    "Young":2000
+  },
+  "cg_tol": 1e-7,
+  "grav_axis":"y",
+  "coll_z":false,
+  "newton_tol":1e-5,
+  "newton_MaxIter":3
+}

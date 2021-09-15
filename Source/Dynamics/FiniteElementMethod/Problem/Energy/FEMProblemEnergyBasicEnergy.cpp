@@ -15,7 +15,6 @@ using namespace Eigen;
 
 namespace PhysIKA {
 /******************************************momentum*******************************/
-
 template <typename T, size_t dim_>
 size_t momentum<T, dim_>::Nx() const
 {

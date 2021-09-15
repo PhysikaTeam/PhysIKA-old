@@ -155,11 +155,11 @@ void CreateScene()
 {
 
     SceneGraph& scene = SceneGraph::getInstance();
-    scene.setUpperBound(Vector3f(1, 4.0, 1));
-    scene.setLowerBound(Vector3f(0, 0.0, 0));
+    scene.setUpperBound(Vector3f(2, 4.0, 2));
+    scene.setLowerBound(Vector3f(0, 0, 0));
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-    root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 4.0, 1), 0.015f, true);
+    root->loadCube(Vector3f(0, 0, 0), Vector3f(2, 4.0, 2), 0.015f, true);
     //root->loadSDF("box.sdf", true);
 
     std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
@@ -170,10 +170,10 @@ void CreateScene()
     //dragon 0.014
     //bunny 0.03
 
-    AddSimulationModel(root, sfi, 0, "fem_hex", "david", 0);
+    AddSimulationModel(root, sfi, 0, "fem_tet", "cup", 0.0);
     AddSimulationModel(root, sfi, 1, "mass_spring", "bunny", 0);
     AddSimulationModel(root, sfi, 2, "fem_hybrid", "duck", 0.4);
-    AddSimulationModel(root, sfi, 3, "meshless", "woodenfish", 0.4);
+    AddSimulationModel(root, sfi, 3, "fem_hex", "woodenfish", 0.4);
     AddSimulationModel(root, sfi, 4, "fem_vox", "homer", 0.8);
     AddSimulationModel(root, sfi, 5, "meshless", "armadillo", 0.8);
 }

@@ -298,6 +298,13 @@ public:
      */
     size_t Nx() const;
 
+    /**
+     * @brief Get the mass vec object
+     * 
+     * @return Eigen::Matrix<T, -1, 1> 
+     */
+    Eigen::Matrix<T, -1, 1> get_mass_vec() const {return mass_vec_;}
+
     Eigen::Matrix<T, -1, 1> vk_, dispk_;
 
 private:

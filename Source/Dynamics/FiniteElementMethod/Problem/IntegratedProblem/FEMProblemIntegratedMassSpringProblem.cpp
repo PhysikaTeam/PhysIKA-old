@@ -55,7 +55,7 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
     para::intensity      = simulation_para.get<double>("intensity");
     para::coll_z         = simulation_para.get<bool>("coll_z", false);
     //TODO: need to check exception
-
+    std::cout << "mass spring input object: " << para::input_object << std::endl;
     const string      filename = para::input_object;
     Matrix<T, -1, -1> nods;
     MatrixXi          cells;
@@ -65,7 +65,7 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
     if (x != nullptr)
         nods = Map<const MAT<T>>(x, nods.rows(), nods.cols());
 
-    REST_  = nods;
+    REST_COARSE_ = REST_  = nods;
     cells_ = cells;
 
     //read fixed points
@@ -116,6 +116,28 @@ ms_problem_builder<T>::ms_problem_builder(const T* x, const boost::property_tree
         semi_implicit_ = make_shared<semi_implicit<T>>(para::dt, mass_vec, position);
     }
 }
+
+    /**
+     * @brief get stiffness matrix.
+     * 
+     * @return Eigen::SparseMatrix<T, Eigen::RowMajor> 
+     */
+    template <typename T>
+    Eigen::SparseMatrix<T, Eigen::RowMajor> ms_problem_builder<T>::get_K() const {
+        if (ebf_.size() == 0) {
+            std::cerr << "[Error] ebf is not prepared!" << std::endl;
+            exit(1);
+        }
+        std::cout << "RestBlock: \n" << REST_COARSE_.block<3, 3>(0, 0) << std::endl;
+        std::cout << "Rest.size(): " << REST_COARSE_.size() / 3 << std::endl;
+        data_ptr<T, 3> data = std::make_shared<dat_str_core<T, 3>>(REST_COARSE_.size() / 3, false); 
+        data->set_zero();
+        ebf_[0]->Hes(REST_COARSE_.data(), data);
+        data->setFromTriplets();
+        data->hes_compress();
+        std::cout << "in Embed MS: " << data->get_hes().nonZeros() << std::endl;
+        return data->get_hes();
+    }
 
 template <typename T>
 std::shared_ptr<Problem<T, 3>> ms_problem_builder<T>::build_problem() const
