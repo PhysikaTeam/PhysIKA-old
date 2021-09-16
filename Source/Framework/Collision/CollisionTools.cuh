@@ -11,6 +11,11 @@
 #include <assert.h>
 #include <omp.h>
 #include <string>
+#include <map>
+
+namespace PhysIKA {
+typedef std::map<void*, int> FUNC_INT_MAP;
+static FUNC_INT_MAP          blkSizeTable;
 
 //// error handler
 #define checkCudaErrors(val) check((val), #val, __FILE__, __LINE__)
@@ -23,6 +28,7 @@ void check(T result, char const* const func, const char* const file, int const l
         exit(EXIT_FAILURE);
     }
 }
+
 //// error handler
 #define getLastCudaError(msg) __getLastCudaError(msg, __FILE__, __LINE__)
 inline void __getLastCudaError(const char* errorMessage, const char* file, const int line)
@@ -71,17 +77,40 @@ inline void __getLastCudaError(const char* errorMessage, const char* file, const
     }            \
     }
 
+// check len
+#define LEN_CHK(l)                                   \
+    int idx = blockDim.x * blockIdx.x + threadIdx.x; \
+    if (idx >= l)                                    \
+        return;
+
+#define BLOCK_DIM 64
+
+// set block per grid
+#define BLK_PAR(l)     \
+    int T = BLOCK_DIM; \
+    int B = BPG(l, T);
+
+// set block per grid 2
+#define BLK_PAR2(l, s) \
+    int T = BLOCK_DIM; \
+    int B = BPG(l, T, s);
+
+// set block per grid 3
+#define BLK_PAR3(l, s, n) \
+    int T = n;            \
+    int B = BPG(l, T, s);
+
+#define cutilSafeCall checkCudaErrors
+
+#define M_PI 3.14159265358979323846
+#define M_SQRT2 1.41421356237309504880
+
 /**
  * print memory usage
  *
  * @param[in] tag tag of the gpu
  */
-void reportMemory(char*);
-
-///////////////////////////////////////////////////////
-// show memory usage of GPU
-
-#define BLOCK_DIM 64
+void reportMemory(const char* tag);
 
 /**
  * eval optimal block size
@@ -168,37 +197,6 @@ inline int evalOptimalBlockSize(cudaFuncAttributes attribs, cudaFuncCache cacheP
     return blockSize;
 }
 
-// check len
-#define LEN_CHK(l)                                   \
-    int idx = blockDim.x * blockIdx.x + threadIdx.x; \
-    if (idx >= l)                                    \
-        return;
-
-// set block per grid
-#define BLK_PAR(l)     \
-    int T = BLOCK_DIM; \
-    int B = BPG(l, T);
-
-// set block per grid 2
-#define BLK_PAR2(l, s) \
-    int T = BLOCK_DIM; \
-    int B = BPG(l, T, s);
-
-// set block per grid 3
-#define BLK_PAR3(l, s, n) \
-    int T = n;            \
-    int B = BPG(l, T, s);
-
-#define cutilSafeCall checkCudaErrors
-
-#define M_PI 3.14159265358979323846
-#define M_SQRT2 1.41421356237309504880
-
-#include <map>
-
-typedef std::map<void*, int> FUNC_INT_MAP;
-static FUNC_INT_MAP          blkSizeTable;
-
 /**
  * get block size of the given function
  *
@@ -222,3 +220,4 @@ inline int getBlkSize(void* func)
         return it->second;
     }
 }
+}  // namespace PhysIKA

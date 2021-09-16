@@ -11,6 +11,7 @@
 #include "CollisionTri3f.cuh"
 #include "CollisionBox.cuh"
 
+namespace PhysIKA {
 typedef struct
 {
     uint    numFace, numVert;
@@ -41,3 +42,4 @@ typedef struct
 
     void computeWSdata(float thickness, bool ccd);
 } g_mesh;
+}  // namespace PhysIKA

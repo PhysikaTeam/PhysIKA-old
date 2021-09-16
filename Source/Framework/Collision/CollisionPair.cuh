@@ -7,6 +7,7 @@
 
 #include "CollisionTools.cuh"
 
+namespace PhysIKA {
 typedef struct _g_pair
 {
     int2* _dPairs;
@@ -183,3 +184,4 @@ typedef struct _g_pairCCD
         return _max_length;
     }
 } g_pairCCD;
+}  // namespace PhysIKA

@@ -12,6 +12,7 @@
 #include "CollisionTools.cuh"
 #include "CollisionVec3.cuh"
 
+namespace PhysIKA {
 inline __device__ int project3(const float3& ax,
                                const float3& p1,
                                const float3& p2,
@@ -24,9 +25,9 @@ inline __device__ int project3(const float3& ax,
     float mx1 = fmaxf(P1, fmaxf(P2, P3));
     float mn1 = fminf(P1, fminf(P2, P3));
 
-    if (mn1 > 0)
+    if (mn1 > 0.0f)
         return 0;
-    if (0 > mx1)
+    if (0.0f > mx1)
         return 0;
 
     return 1;
@@ -139,3 +140,4 @@ tri_contact(float3& P1, float3& P2, float3& P3, float3& Q1, float3& Q2, float3& 
 
     return true;
 }
+}  // namespace PhysIKA

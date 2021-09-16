@@ -26,6 +26,7 @@ typedef unsigned int uint;
 #include <thrust/scan.h>
 #include <thrust/sort.h>
 
+namespace PhysIKA {
 //=======================================================
 
 cudaDeviceProp deviceProp;
@@ -138,7 +139,12 @@ void pushBVHLeaf(unsigned int length, int* idf, bool isCloth)
 
 void refitBVH_Serial(bool isCloth, int length)
 {
-    refit_serial_kernel<<<1, 1, 0>>>(theBVH[isCloth]._bvh, theBVH[isCloth]._bxs, theBVH[isCloth]._triBxs, theBVH[isCloth]._cones, theBVH[isCloth]._triCones, length == 0 ? theBVH[isCloth]._num : length);
+    refit_serial_kernel<<<1, 1, 0>>>(theBVH[isCloth]._bvh,
+                                     theBVH[isCloth]._bxs,
+                                     theBVH[isCloth]._triBxs,
+                                     theBVH[isCloth]._cones,
+                                     theBVH[isCloth]._triCones,
+                                     length == 0 ? theBVH[isCloth]._num : length);
 
     getLastCudaError("refit_serial_kernel");
     cudaThreadSynchronize();
@@ -148,7 +154,13 @@ void refitBVH_Parallel(bool isCloth, int st, int length)
 {
     BLK_PAR(length);
 
-    refit_kernel<<<B, T>>>(theBVH[isCloth]._bvh, theBVH[isCloth]._bxs, theBVH[isCloth]._triBxs, theBVH[isCloth]._cones, theBVH[isCloth]._triCones, st, length);
+    refit_kernel<<<B, T>>>(theBVH[isCloth]._bvh,
+                           theBVH[isCloth]._bxs,
+                           theBVH[isCloth]._triBxs,
+                           theBVH[isCloth]._cones,
+                           theBVH[isCloth]._triCones,
+                           st,
+                           length);
 
     getLastCudaError("refit_kernel");
     cudaThreadSynchronize();
@@ -188,10 +200,8 @@ void pushFront(bool self, int num, unsigned int* data)
 
 //===============================================
 // show memory usage of GPU
-void reportMemory(char* tag)
+void reportMemory(const char* tag)
 {
-    //return;
-
 #ifdef OUTPUT_TXT
     size_t      free_byte;
     size_t      total_byte;
@@ -245,7 +255,19 @@ inline __device__ void pushToFront(int a, int b, uint4* front, uint* idx, uint p
     }
 }
 
-inline __device__ void sprouting(int left, int right, int* bvhA, g_box* bxsA, int* bvhB, g_box* bxsB, uint4* front, uint* frontIdx, int2* pairs, uint* pairIdx, bool update, uint ptr, tri3f* Atris)
+inline __device__ void sprouting(int    left,
+                                 int    right,
+                                 int*   bvhA,
+                                 g_box* bxsA,
+                                 int*   bvhB,
+                                 g_box* bxsB,
+                                 uint4* front,
+                                 uint*  frontIdx,
+                                 int2*  pairs,
+                                 uint*  pairIdx,
+                                 bool   update,
+                                 uint   ptr,
+                                 tri3f* Atris)
 {
     uint2 nStack[STACK_SIZE];
     uint  nIdx = 0;
@@ -368,7 +390,22 @@ __device__ void doPropogate(
     }
 }
 
-__global__ void kernelPropogate(uint4* front, uint* frontIdx, int num, int* bvhA, g_box* bxsA, int bvhAnum, int* bvhB, g_box* bxsB, int bvhBnum, uint* tt, int2* pairs, uint* pairIdx, bool update, tri3f* Atris, int stride, bool* flags)
+__global__ void kernelPropogate(uint4* front,
+                                uint*  frontIdx,
+                                int    num,
+                                int*   bvhA,
+                                g_box* bxsA,
+                                int    bvhAnum,
+                                int*   bvhB,
+                                g_box* bxsB,
+                                int    bvhBnum,
+                                uint*  tt,
+                                int2*  pairs,
+                                uint*  pairIdx,
+                                bool   update,
+                                tri3f* Atris,
+                                int    stride,
+                                bool*  flags)
 {
     int idx = blockDim.x * blockIdx.x + threadIdx.x;
 
@@ -412,12 +449,22 @@ int g_front::propogate(bool& update, bool self, bool ccd)
         uint ttt = 0;
         cutilSafeCall(cudaMemcpy(tt, &ttt, 1 * sizeof(uint), cudaMemcpyHostToDevice));
 
-        kernelPropogate<<<B, T>>>(_dFront, _dIdx, dummy[0], pb1->_bvh, pb1->_bxs, pb1->_num, pb2->_bvh, pb2->_bxs, pb2->_num, tt, thePairs[self]._dPairs, thePairs[self]._dIdx, update, faces, stride, self ? theBVH[1]._ctFlags : NULL);
-        //thePairs[self]._dPairs, thePairs[self]._dIdx, update, faces, stride, (self && !ccd) ? theBVH[1]._ctFlags : NULL);
-        //reportMemory("propogate");
-
-        //cutilSafeCall(cudaMemcpy(&ttt, tt, 1 * sizeof(uint), cudaMemcpyDeviceToHost));
-
+        kernelPropogate<<<B, T>>>(_dFront,
+                                  _dIdx,
+                                  dummy[0],
+                                  pb1->_bvh,
+                                  pb1->_bxs,
+                                  pb1->_num,
+                                  pb2->_bvh,
+                                  pb2->_bxs,
+                                  pb2->_num,
+                                  tt,
+                                  thePairs[self]._dPairs,
+                                  thePairs[self]._dIdx,
+                                  update,
+                                  faces,
+                                  stride,
+                                  self ? theBVH[1]._ctFlags : NULL);
         cudaThreadSynchronize();
         getLastCudaError("kernelPropogate");
     }
@@ -493,25 +540,24 @@ void g_mesh::computeWSdata(float thickness, bool ccd)
 
 //===============================================
 
-__device__ void tri_DCD(
-    uint    t1,
-    uint    t2,
-    uint    t3,
-    uint    tt1,
-    uint    tt2,
-    uint    tt3,
-    float3* cx,
-    float3* cx0,
-    int2*   pairRets,
-    int4*   dv,
-    int*    VF_EE,
-    float*  dist,
-    int*    CCDres,
-    int*    t,
-    uint*   pairIdx,
-    int     fid1,
-    int     fid2,
-    float*  thickness)
+__device__ void tri_DCD(uint    t1,
+                        uint    t2,
+                        uint    t3,
+                        uint    tt1,
+                        uint    tt2,
+                        uint    tt3,
+                        float3* cx,
+                        float3* cx0,
+                        int2*   pairRets,
+                        int4*   dv,
+                        int*    VF_EE,
+                        float*  dist,
+                        int*    CCDres,
+                        int*    t,
+                        uint*   pairIdx,
+                        int     fid1,
+                        int     fid2,
+                        float*  thickness)
 {
     float3 p[3];
     p[0] = cx[t1];
@@ -662,7 +708,20 @@ int g_pair::getCollisions(bool self, g_pairCCD& ret, int* time, float* thickness
     cutilSafeCall(cudaMalloc(( void** )&gthickness, 1 * sizeof(float)));
     cutilSafeCall(cudaMemcpy(gthickness, thickness, 1 * sizeof(float), cudaMemcpyHostToDevice));
 
-    kernelGetCollisions<<<B, T>>>(_dPairs, num, theCloth._dx, theCloth._dx0, theCloth._df, ret._dPairs, ret._dv, ret._dVF_EE, ret.dist, ret.CCD_res, ret._dIdx, tem_time, gthickness, stride);
+    kernelGetCollisions<<<B, T>>>(_dPairs,
+                                  num,
+                                  theCloth._dx,
+                                  theCloth._dx0,
+                                  theCloth._df,
+                                  ret._dPairs,
+                                  ret._dv,
+                                  ret._dVF_EE,
+                                  ret.dist,
+                                  ret.CCD_res,
+                                  ret._dIdx,
+                                  tem_time,
+                                  gthickness,
+                                  stride);
 
     getLastCudaError("kernelGetCollisions");
 
@@ -701,3 +760,4 @@ int getCollisionsGPU(int* rets, int* vf_ee, int* vertex_id, float* dist, int* ti
     }
     return len;
 }
+}  // namespace PhysIKA

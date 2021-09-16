@@ -12,6 +12,7 @@
 typedef unsigned int uint;
 #define MAX_PAIR_NUM 40000000
 
+namespace PhysIKA {
 /**
  * device triangle data structure
  */
@@ -64,7 +65,21 @@ inline __device__ int addPair(uint a, uint b, int2* pairs, uint* idx)
 }
 
 // isVF  0:VF  1:EE
-inline __device__ int addPairDCD(uint a, uint b, uint isVF, uint id1, uint id2, uint id3, uint id4, float d, int* t, int2* pairs, int4* dv, int* VF_EE, float* dt, int* CCDres, uint* idx)
+inline __device__ int addPairDCD(uint   a,
+                                 uint   b,
+                                 uint   isVF,
+                                 uint   id1,
+                                 uint   id2,
+                                 uint   id3,
+                                 uint   id4,
+                                 float  d,
+                                 int*   t,
+                                 int2*  pairs,
+                                 int4*  dv,
+                                 int*   VF_EE,
+                                 float* dt,
+                                 int*   CCDres,
+                                 uint*  idx)
 {
     if (*idx < MAX_PAIR_NUM)
     {
@@ -93,3 +108,4 @@ inline __device__ int addPairDCD(uint a, uint b, uint isVF, uint id1, uint id2, 
 
     return -1;
 }
+}  // namespace PhysIKA

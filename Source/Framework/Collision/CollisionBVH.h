@@ -22,23 +22,23 @@ class bvh_node;
 static vec3f* s_fcenters;  //!< used to store temporary data
 
 /**
-     * front list of the front node
-     */
+  * front list of the front node
+  */
 class front_list : public std::vector<front_node>
 {
 public:
     /**
-         * push the data structure to gpu
-         * 
-         * @param[in] r1 bvh node 1
-         * @param[in] r2 bvh node 2
-         */
+      * push the data structure to gpu
+      * 
+      * @param[in] r1 bvh node 1
+      * @param[in] r2 bvh node 2
+      */
     void push2GPU(bvh_node* r1, bvh_node* r2 = NULL);
 };
 
 /**
-     * bvh node
-     */
+  * bvh node
+  */
 class bvh_node
 {
     TAlignedBox3D<float> _box;       //!< aabb box
@@ -50,58 +50,58 @@ class bvh_node
 
 public:
     /**
-         * constructor
-         */
+      * constructor
+      */
     bvh_node();
 
     /**
-         * destructor
-         */
+      * destructor
+      */
     ~bvh_node();
 
     /**
-         * check collision with the other bvh node
-         * 
-         * @param[in]  other another bvh node
-         * @param[out] ret   triangle pair to store the result
-         */
+      * check collision with the other bvh node
+      * 
+      * @param[in]  other another bvh node
+      * @param[out] ret   triangle pair to store the result
+      */
     void collide(bvh_node* other, std::vector<TrianglePair>& ret);
 
     /**
-         * check collision with the bvtt front
-         *
-         * @param[in]  other another bvh node
-         * @param[out] f     bvtt front that stores the collision
-         * @param[in]  level level
-         * @param[in]  ptr   parent
-         */
+      * check collision with the bvtt front
+      *
+      * @param[in]  other another bvh node
+      * @param[out] f     bvtt front that stores the collision
+      * @param[in]  level level
+      * @param[in]  ptr   parent
+      */
     void collide(bvh_node* other, front_list& f, int level, int ptr);
 
     /**
-         * check self collision within a bvtt front and a node 
-         *
-         * @param[out] lst front list
-         * @param[in]  r   node
-         */
+      * check self collision within a bvtt front and a node 
+      *
+      * @param[out] lst front list
+      * @param[in]  r   node
+      */
     void self_collide(front_list& lst, bvh_node* r);
 
     /**
-         * construct the bvh node
-         *
-         * @param[in] id        index
-         * @param[in] s_fboxes  boxes
-         */
+      * construct the bvh node
+      *
+      * @param[in] id        index
+      * @param[in] s_fboxes  boxes
+      */
     void construct(unsigned int id, TAlignedBox3D<float>* s_fboxes);
 
     /**
-         * construct the bvh node
-         *
-         * @param[in] lst        list
-         * @param[in] num        list item number
-         * @param[in] s_fcenters centers
-         * @param[in] s_fboxes   boxes
-         * @param[in] s_current  current node
-         */
+      * construct the bvh node
+      *
+      * @param[in] lst        list
+      * @param[in] num        list item number
+      * @param[in] s_fcenters centers
+      * @param[in] s_fboxes   boxes
+      * @param[in] s_current  current node
+      */
     void construct(
         unsigned int*         lst,
         unsigned int          num,
@@ -110,119 +110,119 @@ public:
         bvh_node*&            s_current);
 
     /**
-         * refit algorithm, internal
-         *
-         * @param[in] s_fboxes boxes
-         */
+      * refit algorithm, internal
+      *
+      * @param[in] s_fboxes boxes
+      */
     void refit(TAlignedBox3D<float>* s_fboxes);
 
     /**
-         * reset parents of the tree, internal
-         *
-         * @param[in] root       tree node
-         */
+      * reset parents of the tree, internal
+      *
+      * @param[in] root       tree node
+      */
     void resetParents(bvh_node* root);
 
     /**
-         * get boxes
-         *
-         * @return boxes
-         */
+      * get boxes
+      *
+      * @return boxes
+      */
     FORCEINLINE TAlignedBox3D<float>& box()
     {
         return _box;
     }
 
     /**
-         * get left child
-         *
-         * @return left child
-         */
+      * get left child
+      *
+      * @return left child
+      */
     FORCEINLINE bvh_node* left()
     {
         return this - _child;
     }
 
     /**
-         * get right child
-         *
-         * @return right child
-         */
+      * get right child
+      *
+      * @return right child
+      */
     FORCEINLINE bvh_node* right()
     {
         return this - _child + 1;
     }
 
     /**
-         * get triangle id
-         *
-         * @return triangle id
-         */
+      * get triangle id
+      *
+      * @return triangle id
+      */
     FORCEINLINE int triID()
     {
         return _child;
     }
 
     /**
-         * check leaf node
-         *
-         * @return whether current node is a leaf node
-         */
+      * check leaf node
+      *
+      * @return whether current node is a leaf node
+      */
     FORCEINLINE int isLeaf()
     {
         return _child >= 0;
     }
 
     /**
-         * get parent
-         *
-         * @return parent id
-         */
+      * get parent
+      *
+      * @return parent id
+      */
     FORCEINLINE int parentID()
     {
         return _parent;
     }
 
     /**
-         * get current level
-         * 
-         * @param[in]  current   current index
-         * @param[out] max_level max level
-         */
+      * get current level
+      * 
+      * @param[in]  current   current index
+      * @param[out] max_level max level
+      */
     FORCEINLINE void getLevel(int current, int& max_level);
 
     /**
-         * get level index
-         *
-         * @param[in]  current current index
-         * @param[in] idx      index
-         */
+      * get level index
+      *
+      * @param[in]  current current index
+      * @param[in] idx      index
+      */
     FORCEINLINE void getLevelIdx(int current, unsigned int* idx);
 
     /**
-         * sprout algorithm
-         *
-         * @param[in]  other   another bvh node
-         * @param[out] append  front list
-         * @param[out] ret     result in triangle pairs
-         */
+      * sprout algorithm
+      *
+      * @param[in]  other   another bvh node
+      * @param[out] append  front list
+      * @param[out] ret     result in triangle pairs
+      */
     void sprouting(bvh_node* other, front_list& append, std::vector<TrianglePair>& ret);
 
     /**
-         * sprout algorithm second version
-         *
-         * @param[in]  other   another bvh node
-         * @param[out] append  front list
-         * @param[out] ret     result in triangle pairs
-         */
+      * sprout algorithm second version
+      *
+      * @param[in]  other   another bvh node
+      * @param[out] append  front list
+      * @param[out] ret     result in triangle pairs
+      */
     void sprouting2(bvh_node* other, front_list& append, std::vector<TrianglePair>& ret);
 
     friend class bvh;
 };
 
 /**
-     * front node in the bvtt front list
-     */
+  * front node in the bvtt front list
+  */
 class front_node
 {
 public:
@@ -232,18 +232,18 @@ public:
     unsigned int _ptr;    //!< self-coliding parent;
 
     /**
-         * constructor
-         * 
-         * @param[in] l   left child
-         * @param[in] r   right child
-         * @param[in] ptr parant
-         */
+      * constructor
+      * 
+      * @param[in] l   left child
+      * @param[in] r   right child
+      * @param[in] ptr parant
+      */
     front_node(bvh_node* l, bvh_node* r, unsigned int ptr);
 };
 
 /**
-     * internal class for bvh construction
-     */
+  * internal class for bvh construction
+  */
 class aap
 {
 public:
@@ -251,10 +251,10 @@ public:
     float _p;    //!< center
 
     /**
-         * constructor
-         * 
-         * @param[in] total box in whole
-         */
+      * constructor
+      * 
+      * @param[in] total box in whole
+      */
     FORCEINLINE aap(const TAlignedBox3D<float>& total)
     {
         vec3f center = vec3f(total.center().getDataPtr());
@@ -274,11 +274,11 @@ public:
     }
 
     /**
-         * check if center is inside
-         * 
-         * @param[in] mid mid point
-         * @return whether inside
-         */
+      * check if center is inside
+      * 
+      * @param[in] mid mid point
+      * @return whether inside
+      */
     inline bool inside(const vec3f& mid) const
     {
         return mid[_xyz] > _p;
@@ -286,8 +286,8 @@ public:
 };
 
 /**
-     * bvh class for acceleration
-     */
+  * bvh class for acceleration
+  */
 class bvh
 {
     int                   _num         = 0;        //!< node number
@@ -296,15 +296,15 @@ class bvh
     unsigned int*         s_idx_buffer = nullptr;  //!< index buffeer
 public:
     /**
-         * default constuctor
-         */
+      * default constuctor
+      */
     bvh(){};
 
     /**
-         * constuctor
-         * 
-         * @param ms triangle meshes for bvh construction
-         */
+      * constuctor
+      * 
+      * @param ms triangle meshes for bvh construction
+      */
     template <typename T>
     bvh(std::vector<std::shared_ptr<TriangleMesh<T>>>& ms)
     {
@@ -317,24 +317,24 @@ public:
     }
 
     /**
-         * constuctor
-         *
-         * @param[in] ms collision mesh for construction
-         */
+      * constuctor
+      *
+      * @param[in] ms collision mesh for construction
+      */
     bvh(const std::vector<CollisionMesh*>& ms);
 
     /**
-         * refit algorithm, used for bvh construction
-         *
-         * @param s_fboxes aabb boxes
-         */
+      * refit algorithm, used for bvh construction
+      *
+      * @param s_fboxes aabb boxes
+      */
     void refit(TAlignedBox3D<float>* s_fboxes);
 
     /**
-         * construct algorithm
-         *
-         * @param[in] ms triangle meshes
-         */
+      * construct algorithm
+      *
+      * @param[in] ms triangle meshes
+      */
     template <typename T>
     void construct(std::vector<std::shared_ptr<TriangleMesh<T>>>& ms)
     {
@@ -421,18 +421,18 @@ public:
     }
 
     /**
-         *reorder algorithm, used for construction
-         */
+      *reorder algorithm, used for construction
+      */
     void reorder();  // for breath-first refit
 
     /**
-         *reset parent algorithm
-         */
+      *reset parent algorithm
+      */
     void resetParents();
 
     /**
-         *destructor
-         */
+      *destructor
+      */
     ~bvh()
     {
         if (_nodes)
@@ -440,60 +440,60 @@ public:
     }
 
     /**
-         * get root node
-         * 
-         * @return root node
-         */
+      * get root node
+      * 
+      * @return root node
+      */
     bvh_node* root()
     {
         return _nodes;
     }
 
     /**
-         * refit algorithm
-         *
-         * @param[in] ms triangle mesh
-         */
+      * refit algorithm
+      *
+      * @param[in] ms triangle mesh
+      */
     void refit(std::vector<std::shared_ptr<TriangleMesh<DataType3f>>>& ms);
 
     /**
-         * push the host bvh structure to device bvh structure
-         *
-         * @param[in] isCloth is cloth
-         */
+      * push the host bvh structure to device bvh structure
+      *
+      * @param[in] isCloth is cloth
+      */
     void push2GPU(bool);
 
     /**
-         * collide with other bvh structure
-         *
-         * @param[in]  other another bvh structure
-         * @param[out] f     bvtt front
-         * 
-         */
+      * collide with other bvh structure
+      *
+      * @param[in]  other another bvh structure
+      * @param[out] f     bvtt front
+      * 
+      */
     void collide(bvh* other, front_list& f);
 
     /**
-         * collide with other bvh structure
-         *
-         * @param[in]  other another bvh structure
-         * @param[out] ret   triangle pair as result
-         */
+      * collide with other bvh structure
+      *
+      * @param[in]  other another bvh structure
+      * @param[out] ret   triangle pair as result
+      */
     void collide(bvh* other, std::vector<TrianglePair>& ret);
 
     /**
-         * self collision detection
-         *
-         * @param[out] f bvtt front
-         * @param[in]  c triangle mesh
-         */
+      * self collision detection
+      *
+      * @param[out] f bvtt front
+      * @param[in]  c triangle mesh
+      */
     void self_collide(front_list& f, std::vector<std::shared_ptr<TriangleMesh<DataType3f>>>& c);  // hxl
 
     /**
-         * self collision detection
-         *
-         * @param[out] f bvtt front
-         * @param[in]  c collision mesh
-         */
+      * self collision detection
+      *
+      * @param[out] f bvtt front
+      * @param[in]  c collision mesh
+      */
     void self_collide(front_list& f, std::vector<CollisionMesh*>& c);
 };
 }  // namespace PhysIKA

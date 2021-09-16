@@ -1,7 +1,7 @@
 /**
  * @author     : Tang Min (tang_m@zju.edu.cn)
  * @date       : 2021-05-30
- * @description: some device data structures for
+ * @description: some device data structures for gpu collision detection
  * @version    : 1.0
  */
 
@@ -13,6 +13,7 @@
 #define EPS_N float(0.000001)
 #define HALF_PI float(0.5 * M_PI)
 
+namespace PhysIKA {
 /**
   * device cone data structure, use axis and angle to determine the shape
   */
@@ -200,8 +201,8 @@ typedef struct __align__(16) _box3f
 	 */
     inline __host__ __device__ void enlarge(float thickness)
     {
-        _min -= make_float3(thickness);
-        _max += make_float3(thickness);
+        _min -= ::make_float3(thickness);
+        _max += ::make_float3(thickness);
     }
 
     /**
@@ -271,3 +272,4 @@ typedef struct __align__(16) _box3f
     }
 }
 g_box;
+}  // namespace PhysIKA

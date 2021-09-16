@@ -13,8 +13,8 @@
 
 namespace PhysIKA {
 /**
-     * Store collision mesh and if self collision check is needed, internal data structure
-     */
+ * Store collision mesh and if self collision check is needed, internal data structure
+ */
 struct CollisionDate
 {
     CollisionDate(CollisionMesh* m, bool flag)
@@ -24,13 +24,13 @@ struct CollisionDate
 };
 
 /**
-     * Store the collision impact information
-     */
+ * Store the collision impact information
+ */
 struct ImpactInfo
 {
     /*
-         * constructor, used internally
-         */
+     * constructor, used internally
+     */
     ImpactInfo(int fid1, int fid2, int vf_ee, int v, int v2, int v3, int v4, float d, float t, int CCD)
     {
         f_id[0] = fid1;
