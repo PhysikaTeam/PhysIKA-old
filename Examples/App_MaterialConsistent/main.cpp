@@ -52,6 +52,13 @@
 using namespace std;
 using namespace PhysIKA;
 
+/**
+ * @brief init problem and solver.
+ * 
+ * @tparam DynamicsT the dynamics backend.
+ * @param model the current model.
+ * @param pt the property tree for config the problem and solver.
+ */
 template <typename DynamicsT>
 void init_problem_and_solver(const std::shared_ptr<DynamicsT>& model, const boost::property_tree::ptree& pt)
 {
@@ -63,6 +70,17 @@ void init_problem_and_solver(const std::shared_ptr<ParticleElasticBody<DataType3
 {
 }
 
+/**
+ * @brief add simulation model.
+ * 
+ * @tparam DynamicsT the current model.
+ * @param root the scene instance.
+ * @param sfi the collision detection instance.
+ * @param color the color for the current model.
+ * @param pos the position for the current model.
+ * @param pt the property tree for config the problem and solver.
+ * @return std::shared_ptr<DynamicsT> 
+ */
 template <typename DynamicsT>
 std::shared_ptr<DynamicsT> AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, const Vector3f& color, const Vector3f& pos, const boost::property_tree::ptree& pt)
 {

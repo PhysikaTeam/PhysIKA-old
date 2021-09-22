@@ -176,6 +176,10 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, int i
     }
 }
 
+/**
+ * @brief Create a Scene object test one fem model behavior.
+ * 
+ */
 void CreateScene()
 {
 

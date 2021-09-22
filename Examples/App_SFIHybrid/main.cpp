@@ -55,6 +55,10 @@
 using namespace std;
 using namespace PhysIKA;
 
+/**
+ * @brief Create a Scene object. 3 bunny with fluid scene. test Solid Fluid Hybrid simulation scene.
+ * 
+ */
 void CreateScene()
 {
 

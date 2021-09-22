@@ -51,6 +51,16 @@
 using namespace std;
 using namespace PhysIKA;
 
+/**
+ * @brief setup some basic information for the bunny model.
+ *        such as color and elasticity solver.
+ * 
+ * @tparam T 
+ * @param bunny the input model.
+ * @param i the index for the current model.
+ * @param color the color for the current model.
+ * @param offset_dis the displacement offset of the current model.
+ */
 template <typename T>
 void SetupModel(T& bunny, int i, std::string model = "")
 {
@@ -81,6 +91,16 @@ void SetupModel(T& bunny, int i, std::string model = "")
     bunny->getTopologyMapping()->setSearchingRadius(0.05);
 }
 
+/**
+ * @brief add simulation model.
+ * 
+ * @param root the scene instance.
+ * @param sfi the collision detection instance.
+ * @param i the id of the current added model.
+ * @param phy_model the physics model file for the current added model.
+ * @param geo_model thee geometry model for the current added model.
+ * @param offset_dis the offset for the current added model.
+ */
 void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, int i, std::string model = "")
 {
     if (model == "mass_spring")
@@ -120,6 +140,10 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::
     }
 }
 
+/**
+ * @brief Create a Scene object. setup scene: 3 elastic bunnies spacing horizontally fall to the ground, using different algorithm backend
+ * 
+ */
 void CreateScene()
 {
 
