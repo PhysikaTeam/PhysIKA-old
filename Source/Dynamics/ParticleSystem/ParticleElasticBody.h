@@ -115,7 +115,8 @@ public:
                                               //!< a private member var_Horizon and a public function varHorizon()
 
 private:
-    std::shared_ptr<Node> m_surfaceNode;  //!< surface mesh node, generally for rendering purposes
+    std::shared_ptr<Node> m_surfaceNode;   //!< surface mesh node, generally for rendering purposes
+    int                   frame_id{ -1 };  //!< frame counter
 };
 
 #ifdef PRECISION_FLOAT

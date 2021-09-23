@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-add_subdirectory(FiniteElementMethod)
-set(LIB_NAMES ParticleSystem RigidBody HeightField EmbeddedMethod FastMultiphaseSPH Sand)
+set(LIB_NAMES ParticleSystem RigidBody HeightField EmbeddedMethod FastMultiphaseSPH Sand FiniteElementMethod)
 
 foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
     set(LIB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${LIB_NAME}")
@@ -29,22 +28,35 @@ foreach(LIB_NAME IN ITEMS ${LIB_NAMES})
         source_group("${GROUP_PATH}" FILES "${SRC}")
     endforeach()
     if(${LIB_NAME} STREQUAL "EmbeddedMethod")
-      set(MARVEL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod)
-        #target_include_directories(${LIB_NAME} PUBLIC ${MARVEL_DIR}/Source ${MARVEL_DIR}/Extern)
-        target_include_directories(${LIB_NAME} PUBLIC
-        $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Source>
-        $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Extern>
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Extern/glm-0.9.9.7>
-        $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Extern/glm-0.9.9.7>
+        target_link_libraries(${LIB_NAME} PUBLIC FiniteElementMethod)
+    elseif(${LIB_NAME} STREQUAL "FiniteElementMethod")
+        target_include_directories(${LIB_NAME}
+            PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod>
+                $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod>
+            PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod/Geometry>
+                $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Geometry>
+            PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod/Geometry/Tetrahedron>
+                $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Geometry/Tetrahedron>
+            PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod/Geometry/Tetrahedron/CutCellGeneration>
+                $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Geometry/Tetrahedron/CutCellGeneration>
+            PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod/Geometry/Tetrahedron/ManifoldChecking>
+                $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Geometry/Tetrahedron/ManifoldChecking>
+            PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod/Geometry/Tetrahedron/Predicates>
+                $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Geometry/Tetrahedron/Predicates>
+            PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/FiniteElementMethod/Geometry/Tetrahedron/Tetrahedron>
+                $<INSTALL_INTERFACE:${PHYSIKA_INC_INSTALL_DIR}/Dynamics/FiniteElementMethod/Geometry/Tetrahedron/Tetrahedron>
         )
-        #target_link_libraries(${LIB_NAME}
-        #$<INSTALL_INTERFACE:ZJU_SOLVER>)
-        #target_link_libraries(${LIB_NAME} ${ZJU_LIBRARIES})
-        target_link_libraries(${LIB_NAME} ZJU_SOLVER embedded_elas_fem_pb elas_fem_pb embedded_mass_spring_pb mass_spring_pb)
-        #starget_link_libraries(${LIB_NAME} ZJU_SOLVER embedded_elas_fem_pb elas_fem_pb embedded_mass_spring_pb mass_spring_pb)
-    else()
-        target_link_libraries(${LIB_NAME} PUBLIC Core Framework IO)
     endif()
+    
+    target_link_libraries(${LIB_NAME} PUBLIC Core Framework IO)
+    
     
     if(WIN32)
         target_compile_options(${LIB_NAME} PRIVATE -Xcompiler "/wd 4819")               #禁止编译时报告文件编码不是unicode的warning，由于cuda头文件都不是unicode。使编译报错更清晰

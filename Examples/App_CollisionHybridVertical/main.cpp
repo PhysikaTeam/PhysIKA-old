@@ -1,3 +1,14 @@
+/**
+ * @author     : n-jing (siliuhe@sina.com)
+ * @date       : 2020-06-30
+ * @description: demo of embedded mass-spring and embedded fem methods
+ * @version    : 1.0
+ *
+ * @author     : Zhu Fei (feizhu@pku.edu.cn)
+ * @date       : 2021-07-19
+ * @description: poslish code
+ * @version    : 1.1
+ */
 #include <iostream>
 #include <memory>
 #include <cuda.h>
@@ -36,12 +47,22 @@
 #include "Dynamics/EmbeddedMethod/EmbeddedFiniteElement.h"
 #include "Dynamics/EmbeddedMethod/EmbeddedMassSpring.h"
 #include <boost/property_tree/json_parser.hpp>
+#include "Dynamics/FiniteElementMethod/Geometry/FEMGeometrySurf2Tet.h"
 
 using namespace std;
 using namespace PhysIKA;
-
+/**
+ * @brief setup some basic information for the bunny model.
+ *        such as color and elasticity solver.
+ * 
+ * @tparam T 
+ * @param bunny the input model.
+ * @param i the index for the current model.
+ * @param color the color for the current model.
+ * @param offset_dis the displacement offset of the current model.
+ */
 template <typename T>
-void SetupModel(T& bunny, int i, Vector3f color)
+void SetupModel(T& bunny, int i, Vector3f color, const float offset_dis)
 {
     auto sRender = std::make_shared<SurfaceMeshRender>();
     bunny->getSurfaceNode()->addVisualModule(sRender);
@@ -56,7 +77,7 @@ void SetupModel(T& bunny, int i, Vector3f color)
 
     bunny->setMass(1000.0);
 
-    bunny->translate(Vector3f(0.5, 0.2 + 0.4 * i, 0.8));
+    bunny->translate(Vector3f(0.3 + i % 2 * 0.4, 0.2 + offset_dis, 0.8));
     bunny->setVisible(true);
     bunny->getElasticitySolver()->setIterationNumber(10);
     //bunny->getElasticitySolver()->setMu(1e20);
@@ -67,7 +88,17 @@ void SetupModel(T& bunny, int i, Vector3f color)
     bunny->getTopologyMapping()->setSearchingRadius(0.05);
 }
 
-void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, int i, std::string phy_model, std::string geo_model)
+/**
+ * @brief add simulation model.
+ * 
+ * @param root the scene instance.
+ * @param sfi the collision detection instance.
+ * @param i the id of the current added model.
+ * @param phy_model the physics model file for the current added model.
+ * @param geo_model thee geometry model for the current added model.
+ * @param offset_dis the offset for the current added model.
+ */
+void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::shared_ptr<SolidFluidInteraction<DataType3f>>& sfi, int i, std::string phy_model, std::string geo_model, const float offset_dis)
 {
     const string    path        = "../../Media/zju/" + geo_model + "/";
     Eigen::Vector3f color_eigen = Eigen::Vector3f::Random();
@@ -88,7 +119,7 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::
         bunny->loadSurface(path + geo_model + ".obj");
 
         //Vector3f color(1, 1, 0);
-        SetupModel(bunny, i, color);
+        SetupModel(bunny, i, color, offset_dis);
 
         boost::property_tree::ptree pt;
         read_json(jsonfile_path, pt);
@@ -102,10 +133,11 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::
         root->addParticleSystem(bunny);
 
         const string particles_file = path + geo_model + "_points.obj";
+        const string surf_file      = path + geo_model + ".obj";
         bunny->loadParticles(particles_file);
-        bunny->loadSurface(path + geo_model + ".obj");
+        bunny->loadSurface(surf_file);
 
-        SetupModel(bunny, i, color);
+        SetupModel(bunny, i, color, offset_dis);
 
         boost::property_tree::ptree pt;
         /*read_json("../../Media/dragon/collision_hybrid.json", pt);*/
@@ -113,6 +145,14 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::
         //const std::string jsonfile_path = "../../Media/dragon/embedded_finite_element.json";
         const std::string jsonfile_path = path + phy_model + ".json";
         read_json(jsonfile_path, pt);
+
+        if (phy_model == "fem_tet" && pt.get<bool>("gen_tet", true))
+        {
+            string tet_file = pt.get<string>("filename") + "coarse_tmp";
+            surf2tet(surf_file, tet_file);
+            pt.put("filename_coarse", tet_file);
+            cout << "after tetrahedronlize " << pt.get<string>("filename_coarse");
+        }
 
         bunny->init_problem_and_solver(pt);
         sfi->addParticleSystem(bunny);
@@ -126,20 +166,23 @@ void AddSimulationModel(std::shared_ptr<StaticBoundary<DataType3f>>& root, std::
         bunny->loadParticles(particles_file);
         bunny->loadSurface(path + geo_model + ".obj");
         //Vector3f color(0, 1, 1);
-        SetupModel(bunny, i, color);
+        SetupModel(bunny, i, color, offset_dis);
         sfi->addParticleSystem(bunny);
     }
 }
 
+/**
+ * setup scene: 6 elastic objects fall to the ground, using different algorithm backend
+ */
 void CreateScene()
 {
 
     SceneGraph& scene = SceneGraph::getInstance();
-    scene.setUpperBound(Vector3f(1, 10.0, 1));
+    scene.setUpperBound(Vector3f(1, 4.0, 1));
     scene.setLowerBound(Vector3f(0, 0.0, 0));
 
     std::shared_ptr<StaticBoundary<DataType3f>> root = scene.createNewScene<StaticBoundary<DataType3f>>();
-    root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 10.0, 1), 0.015f, true);
+    root->loadCube(Vector3f(0, 0.0, 0), Vector3f(1, 4.0, 1), 0.015f, true);
     //root->loadSDF("box.sdf", true);
 
     std::shared_ptr<SolidFluidInteraction<DataType3f>> sfi = std::make_shared<SolidFluidInteraction<DataType3f>>();
@@ -150,24 +193,12 @@ void CreateScene()
     //dragon 0.014
     //bunny 0.03
 
-    AddSimulationModel(root, sfi, 0, "fem_hex", "david");
-    AddSimulationModel(root, sfi, 1, "mass_spring", "bunny");
-    AddSimulationModel(root, sfi, 2, "fem_hybrid", "duck");
-    AddSimulationModel(root, sfi, 3, "meshless", "woodenfish");
-    AddSimulationModel(root, sfi, 4, "fem_vox", "homer");
-    AddSimulationModel(root, sfi, 5, "fem_tet", "armadillo");
-
-    /*    AddSimulationModel(root, sfi, 2, "meshless", "duck");
-    AddSimulationModel(root, sfi, 3, "meshless", "duck");
-    AddSimulationModel(root, sfi, 4, "meshless", "duck");*/
-    //    for (int i = 0; i < 3; i++)
-    //    {
-    //    string model = (i%3 == 0) ? "" : (i%3 == 1) ? "mass_spring" : "fem";
-    ///*      string model;*/
-    //    AddSimulationModel(root, sfi, i, model);
-    //
-    //    }
-    //
+    AddSimulationModel(root, sfi, 0, "fem_hex", "david", 0);
+    AddSimulationModel(root, sfi, 1, "mass_spring", "bunny", 0);
+    AddSimulationModel(root, sfi, 2, "fem_hybrid", "duck", 0.4);
+    AddSimulationModel(root, sfi, 3, "meshless", "woodenfish", 0.4);
+    AddSimulationModel(root, sfi, 4, "fem_tet", "homer", 0.8);
+    AddSimulationModel(root, sfi, 5, "meshless", "armadillo", 0.8);
 }
 
 int main()

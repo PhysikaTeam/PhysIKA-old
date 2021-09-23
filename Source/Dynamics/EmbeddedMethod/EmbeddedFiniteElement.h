@@ -6,7 +6,7 @@
  */
 #pragma once
 #include "ParticleSystem/ParticleSystem.h"
-#include "Common/framework.h"
+#include "FiniteElementMethod/Common/FEMCommonFramework.h"
 #include "EmbeddedIntegrator.h"
 #include <boost/property_tree/ptree.hpp>
 
@@ -54,10 +54,12 @@ public:
 public:
     /*VarField<Real> m_horizon;*/
     DEF_EMPTY_VAR(Horizon, Real, "Horizon");
+    std::shared_ptr<embedded_elas_problem_builder<Real>> epb_fac_;
 
 protected:
-    std::shared_ptr<Node>                                m_surfaceNode;
-    std::shared_ptr<embedded_elas_problem_builder<Real>> epb_fac;
+    std::shared_ptr<Node> m_surfaceNode;
+    std::string           output;
+    int                   frame_id{ -1 };
 };
 
 #ifdef PRECISION_FLOAT
